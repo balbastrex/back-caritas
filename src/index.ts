@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import express, { Express } from 'express';
 import helmet from 'helmet';
 import { createConnections } from 'typeorm';
+import Login from './http/controllers/Auth/login';
 
 dotenv.config();
 
@@ -23,7 +24,7 @@ createConnections().then(connection => {
   console.log('Connection error -> ', error);
 });
 
-app.post('/api/v1/login', () => console.log('test endpoint'));
+app.post('/api/v1/login', Login);
 
 app.listen(PORT, () => {
   console.log(`server started at http://localhost:${PORT}`);
