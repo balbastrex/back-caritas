@@ -1,0 +1,28 @@
+version: '3.7'
+
+services:
+  mysql:
+    env_file:
+      - .env
+    build:
+      args:
+        - USER_ID=${USER_ID}
+        - GROUP_ID=${GROUP_ID}
+      context: .
+      dockerfile: ./docker/mysql/Dockerfile
+    volumes:
+      - ./data/caritasDB:/var/lib/mysql
+    ports:
+      - ${DB_PORT:-3306}:3306
+    restart: 'on-failure'
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD:-pleaseletssetarootpassword}"
+      MYSQL_DATABASE: "${DB_NAME:-homestead}"
+      MYSQL_USER: "${DB_USER:-homestead}"
+      MYSQL_PASSWORD: "${DB_PWD:-pleaseletssetapassword}"
+      MYSQL_ALLOW_EMPTY_PASSWORD: "no"
+    logging:
+      driver: json-file
+      options:
+        max-size: "50M"
+        max-file: "10"
