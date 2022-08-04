@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node dist/index.js",
+    "start": "ts-node src/index.ts",
+    "prod": "ts-node dist/index.js",
     "build": "tsc && copyfiles ./resources/* dist/",
     "dev": "tsc-watch --onSuccess \"ts-node src/index.ts\" ",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js -c default",
