@@ -5,6 +5,9 @@ import express, { Express } from 'express';
 import helmet from 'helmet';
 import { createConnections } from 'typeorm';
 import Login from './http/controllers/Auth/login';
+import verifyToken from './http/middleware/VerifyToken';
+
+import userRoutes from './routes/user.routes';
 
 dotenv.config();
 
@@ -25,6 +28,9 @@ createConnections().then(connection => {
 });
 
 app.post('/api/v1/login', Login);
+app.use('/api/v1/', verifyToken);
+
+app.use(userRoutes);
 
 app.listen(PORT, () => {
   console.log(`server started at http://localhost:${PORT}`);
