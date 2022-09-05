@@ -8,6 +8,7 @@ import Login from './http/controllers/Auth/login';
 import verifyToken from './http/middleware/VerifyToken';
 
 import userRoutes from './routes/user.routes';
+import marketRoutes from './routes/market.routes';
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ app.post('/api/v1/login', Login);
 app.use('/api/v1/', verifyToken);
 
 app.use(userRoutes);
+app.use(marketRoutes);
 
 app.listen(PORT, () => {
   console.log(`server started at http://localhost:${PORT}`);
