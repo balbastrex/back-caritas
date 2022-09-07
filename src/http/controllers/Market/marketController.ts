@@ -68,3 +68,29 @@ export const ProductsMarketIndex = async (request: Request, response: Response) 
 
   return response.status(200).json(productsResponse);
 }
+
+export const MarketUpdate = async (request: Request, response: Response) => {
+
+  const marketId = request.params.id;
+  const market: Market = await Market.findOne(marketId);
+
+  if (!market) {
+    return response.status(404).json({ message: 'Market not found.' });
+  }
+
+  market.name = request.body.name;
+  market.address = request.body.address;
+  market.email = request.body.email;
+  market.phone = request.body.phone;
+  market.expenses = request.body.expenses;
+  market.product_percentage = request.body.productPercentage;
+  market.budget_base = request.body.budgetBase;
+  market.budget_adult = request.body.budgetAdult;
+  market.budget_child = request.body.budgetChild;
+  await market.save();
+
+  const markets: Market[] = await Market.find();
+  const marketResources = markets.map(market => new MarketResource(market));
+
+  return response.status(200).json(marketResources);
+}
