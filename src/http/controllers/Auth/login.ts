@@ -4,6 +4,7 @@ import { getRepository } from 'typeorm';
 import { User } from '../../../entities/User';
 import * as bcrypt from 'bcrypt';
 import logger from 'npmlog';
+import { UserResource } from '../User/UserResource';
 require('dotenv').config()
 
 const Login = async (request: Request, response: Response) => {
@@ -32,7 +33,10 @@ const Login = async (request: Request, response: Response) => {
           name: user.name,
           lastName: user.lastName,
           userName: user.userName,
-          email: user.email
+          email: user.email,
+          profileId: user.profileId,
+          marketId: user.marketId,
+          parishId: user.parishId,
         },
           process.env.HASH_ENCRYPTION,
           { expiresIn: '8h' })
@@ -40,7 +44,7 @@ const Login = async (request: Request, response: Response) => {
         logger.info('Login', `${user.name} logged successfully`);
         return response.status(200).json({
           status: 'Logged in successfully',
-          user: user,
+          user: new UserResource(user),
           token: jwtToken,
         });
       }

@@ -36,6 +36,15 @@ export class User extends BaseEntity{
   @Column({ unique: true, length: 70 })
   email: string;
 
+  @Column({ name: 'id_perfil' })
+  profileId: string;
+
+  @Column({ name: 'id_economato' })
+  marketId: string;
+
+  @Column({ name: 'id_church' })
+  parishId: string;
+
   @CreateDateColumn({ name: 'created' })
   created_at
   @UpdateDateColumn({ name: 'updated' })

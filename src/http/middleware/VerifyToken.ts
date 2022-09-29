@@ -26,6 +26,9 @@ const verifyToken = (req: Request, res: Response, next: Function) => {
     }
 
     res.locals.email = decoded.email;
+    res.locals.profileId = decoded.profileId;
+    res.locals.marketId = decoded.marketId;
+    res.locals.parishId = decoded.parishId;
   });
 
   next();
