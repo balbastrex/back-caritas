@@ -87,6 +87,7 @@ export const MarketUpdate = async (request: Request, response: Response) => {
   market.budget_base = request.body.budgetBase;
   market.budget_adult = request.body.budgetAdult;
   market.budget_child = request.body.budgetChild;
+  market.distribution_type = request.body.distributionType;
   await market.save();
 
   const markets: Market[] = await Market.find();
