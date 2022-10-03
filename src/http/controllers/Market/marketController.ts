@@ -7,16 +7,17 @@ import { ParishMarketResource } from './ParishMarketResource';
 import { ProductMarketResource } from './ProductMarketResource';
 
 export const MarketIndex = async (request: Request, response: Response) => {
-  const markets: Market[] = await Market.find();
+  let markets: Market[];
+
+  markets = await Market.find(response.locals.findQuery);
+
   const marketResources = markets.map(market => new MarketResource(market));
 
   return response.status(200).json(marketResources);
 };
 
 export const MarketShow = async (request: Request, response: Response) => {
-
-  const marketId = request.params.id;
-  const market: Market = await Market.findOne(marketId);
+  const market: Market = await Market.findOne(response.locals.findQuery);
 
   if (!market) {
     return response.status(404).json({ message: 'Market not found.' });
@@ -28,7 +29,6 @@ export const MarketShow = async (request: Request, response: Response) => {
 }
 
 export const ParishesMarketIndex = async (request: Request, response: Response) => {
-
   const marketId = request.params.id;
   const market: Market = await Market.findOne(marketId);
 
@@ -71,8 +71,7 @@ export const ProductsMarketIndex = async (request: Request, response: Response) 
 
 export const MarketUpdate = async (request: Request, response: Response) => {
 
-  const marketId = request.params.id;
-  const market: Market = await Market.findOne(marketId);
+  const market: Market = await Market.findOne(response.locals.findQuery);
 
   if (!market) {
     return response.status(404).json({ message: 'Market not found.' });

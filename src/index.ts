@@ -5,7 +5,10 @@ import express, { Express } from 'express';
 import helmet from 'helmet';
 import { createConnections } from 'typeorm';
 import Login from './http/controllers/Auth/login';
-import parishPolicies from './http/middleware/ParishPolicies';
+import marketGeneralPolicy from './http/middleware/MarketGeneralPolicy';
+import marketParamPolicies from './http/middleware/MarketParamPolicies';
+import parishGeneralPolicy from './http/middleware/ParishGeneralPolicy';
+import parishPolicies from './http/middleware/ParishGeneralPolicy';
 import verifyToken from './http/middleware/VerifyToken';
 
 import userRoutes from './routes/user.routes';
@@ -31,8 +34,14 @@ createConnections().then(connection => {
 });
 
 app.post('/api/v1/login', Login);
+
 app.use('/api/v1/', verifyToken);
-app.use('/api/v1/', parishPolicies);
+
+app.use('/api/v1/market', marketGeneralPolicy);
+app.use('/api/v1/market/:id', marketParamPolicies);
+
+app.use('/api/v1/parish', parishGeneralPolicy);
+// app.use('/api/v1/parish/:id', parishPolicies);
 
 app.use(userRoutes);
 app.use(marketRoutes);
