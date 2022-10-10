@@ -7,6 +7,7 @@ export class ParishResource {
   address: string;
   email: string;
   phone: string;
+  contact: string;
 
   constructor(parish: Parish) {
     this.id = parish.id;
@@ -15,5 +16,6 @@ export class ParishResource {
     this.address = parish.address;
     this.email = parish.email;
     this.phone = parish.phone;
+    this.contact = parish.contact;
   }
 }
