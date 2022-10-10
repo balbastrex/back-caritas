@@ -8,7 +8,7 @@ import Login from './http/controllers/Auth/login';
 import marketGeneralPolicy from './http/middleware/MarketGeneralPolicy';
 import marketParamPolicies from './http/middleware/MarketParamPolicies';
 import parishGeneralPolicy from './http/middleware/ParishGeneralPolicy';
-import parishPolicies from './http/middleware/ParishGeneralPolicy';
+import parishParamPolicies from './http/middleware/ParishParamPolicies';
 import verifyToken from './http/middleware/VerifyToken';
 
 import userRoutes from './routes/user.routes';
@@ -41,7 +41,7 @@ app.use('/api/v1/market', marketGeneralPolicy);
 app.use('/api/v1/market/:id', marketParamPolicies);
 
 app.use('/api/v1/parish', parishGeneralPolicy);
-// app.use('/api/v1/parish/:id', parishPolicies);
+app.use('/api/v1/parish/:id', parishParamPolicies);
 
 app.use(userRoutes);
 app.use(marketRoutes);

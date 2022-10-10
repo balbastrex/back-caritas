@@ -89,8 +89,5 @@ export const MarketUpdate = async (request: Request, response: Response) => {
   market.distribution_type = request.body.distributionType;
   await market.save();
 
-  const markets: Market[] = await Market.find();
-  const marketResources = markets.map(market => new MarketResource(market));
-
-  return response.status(200).json(marketResources);
+  return response.status(200).json({ id: market.id });
 }
