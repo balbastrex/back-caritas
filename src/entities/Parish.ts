@@ -4,10 +4,11 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne,
+  ManyToOne, OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Beneficiary } from './Beneficiary';
 import { Market } from './Market';
 
 @Entity({ name: 'church',  synchronize: false })
@@ -40,6 +41,13 @@ export class Parish extends BaseEntity {
   @ManyToOne(() => Market, market => market.parishes)
   @JoinColumn({ name: 'id_economato' })
   market: Market;
+
+  @OneToMany(() => Beneficiary, beneficiary => beneficiary.parish,
+    {
+      onDelete: 'NO ACTION',
+      onUpdate: 'NO ACTION'
+    })
+  beneficiaries: Beneficiary[];
 
   @CreateDateColumn()
   created

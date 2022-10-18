@@ -1,7 +1,7 @@
 import {
   BaseEntity,
   Column, CreateDateColumn,
-  Entity,
+  Entity, JoinColumn, ManyToOne,
   OneToMany, PrimaryGeneratedColumn, UpdateDateColumn,
 } from 'typeorm';
 import { DistributionTypes } from '../utils/constants';
@@ -16,9 +16,6 @@ export class Beneficiary extends BaseEntity {
 
   @Column()
   license: number;
-
-  @Column()
-  id_church: number;
 
   @Column({ length: 16 })
   cif: string;
@@ -81,6 +78,18 @@ export class Beneficiary extends BaseEntity {
   gender: string;
 
   @Column()
+  gratuitous: number;
+
+  @Column()
+  expires: Date;
+
+  @Column()
+  sice: number;
+
+  @Column({ default: true })
+  needs_print: boolean;
+
+  @Column()
   id_family_type: number;
 
   @Column()
@@ -104,17 +113,12 @@ export class Beneficiary extends BaseEntity {
   @Column()
   id_turn: number;
 
-  @Column()
-  gratuitous: number;
+  @Column({ name: 'id_church' })
+  parishId: number;
 
-  @Column()
-  expires: Date;
-
-  @Column()
-  sice: number;
-
-  @Column({ default: true })
-  needs_print: boolean;
+  @ManyToOne(() => Parish, parish => parish.beneficiaries)
+  @JoinColumn({ name: 'id_church' })
+  parish: Parish;
 
   @CreateDateColumn()
   created
