@@ -18,9 +18,8 @@ export class BeneficiaryResource {
   state: string;
   zip: string;
   free: boolean;
-  nationality: number;
+  nationalityId: number;
   birthDate: Date;
-  parishId: number;
   childrenUnder18: number;
   childrenOver18: number;
   homeless: boolean;
@@ -29,14 +28,16 @@ export class BeneficiaryResource {
   gratuitous: number;
   sice: number;
   needsPrint: boolean;
+  familyTypeId: number;
 
-  familyType: number;
-  citizenType: number;
-  civilStateType: number;
-  employmentType: number;
-  guardianshipType: number;
-  educationType: number;
-  authorizationType: number;
+  citizenTypeId: number;
+  civilStateTypeId: number;
+  employmentTypeId: number;
+  guardianshipTypeId: number;
+  educationTypeId: number;
+  authorizationTypeId: number;
+  parishId: number;
+  turnId: number;
 
   constructor(beneficiary: Beneficiary) {
     this.id = beneficiary.id;
@@ -56,7 +57,7 @@ export class BeneficiaryResource {
     this.zip = beneficiary.zip;
     this.free = beneficiary.free;
     this.parishId = beneficiary.parishId;
-    this.nationality = beneficiary.nationality;
+    this.nationalityId = beneficiary.nationalityId;
     this.birthDate = beneficiary.birth_date
     this.childrenUnder18 = isNull(beneficiary.children_under_18) ? 0 : beneficiary.children_under_18;
     this.childrenOver18 = isNull(beneficiary.children_over_18) ? 0 : beneficiary.children_over_18;
@@ -67,12 +68,13 @@ export class BeneficiaryResource {
     this.sice = beneficiary.sice;
     this.needsPrint = beneficiary.needs_print;
 
-    this.familyType = isNull(beneficiary.id_family_type) ? 0 : beneficiary.id_family_type;
-    this.citizenType = isNull(beneficiary.id_citizen_type) ? 0 : beneficiary.id_citizen_type;
-    this.civilStateType = isNull(beneficiary.id_civil_state_type) ? 0 : beneficiary.id_civil_state_type;
-    this.employmentType = isNull(beneficiary.id_employment_type) ? 0 : beneficiary.id_employment_type;
-    this.guardianshipType = isNull(beneficiary.id_guardianship_type) ? 0 : beneficiary.id_guardianship_type;
-    this.educationType = isNull(beneficiary.id_education_type) ? 0 : beneficiary.id_education_type;
-    this.authorizationType = isNull(beneficiary.id_authorization_type) ? 0 : beneficiary.id_authorization_type;
+    this.familyTypeId = isNull(beneficiary.familyTypeId) ? 0 : beneficiary.familyTypeId;
+    this.citizenTypeId = isNull(beneficiary.citizenTypeId) ? 0 : beneficiary.citizenTypeId;
+    this.civilStateTypeId = isNull(beneficiary.civilStateTypeId) ? 0 : beneficiary.civilStateTypeId;
+    this.employmentTypeId = isNull(beneficiary.employmentTypeId) ? 0 : beneficiary.employmentTypeId;
+    this.guardianshipTypeId = isNull(beneficiary.guardianshipTypeId) ? 0 : beneficiary.guardianshipTypeId;
+    this.educationTypeId = isNull(beneficiary.educationTypeId) ? 0 : beneficiary.educationTypeId;
+    this.authorizationTypeId = isNull(beneficiary.authorizationTypeId) ? 0 : beneficiary.authorizationTypeId;
+    this.turnId = isNull(beneficiary.turnId) ? 0 : beneficiary.turnId;
   }
 }

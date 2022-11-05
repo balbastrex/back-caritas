@@ -35,8 +35,8 @@ export class Parish extends BaseEntity {
   @Column({ length: 128, nullable: true })
   contact: string;
 
-  @Column()
-  id_economato: number;
+  @Column({ name: 'id_economato' })
+  marketId: number;
 
   @ManyToOne(() => Market, market => market.parishes)
   @JoinColumn({ name: 'id_economato' })

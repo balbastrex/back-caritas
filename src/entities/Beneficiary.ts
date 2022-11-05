@@ -8,7 +8,7 @@ import { DistributionTypes } from '../utils/constants';
 import { ColumnNumericTransformer } from '../utils/decimal.transformer';
 import { Parish } from './Parish';
 
-@Entity({ name: 'beneficiary',  synchronize: false })
+@Entity({ name: 'beneficiary',  synchronize: true })
 export class Beneficiary extends BaseEntity {
 
   @PrimaryGeneratedColumn('increment')
@@ -59,8 +59,8 @@ export class Beneficiary extends BaseEntity {
   @Column()
   free: boolean;
 
-  @Column()
-  nationality: number;
+  @Column({ name: 'nationality' })
+  nationalityId: number;
 
   @Column()
   birth_date: Date;
@@ -89,29 +89,29 @@ export class Beneficiary extends BaseEntity {
   @Column({ default: true })
   needs_print: boolean;
 
-  @Column()
-  id_family_type: number;
+  @Column({ name: 'id_family_type' })
+  familyTypeId: number;
 
-  @Column()
-  id_citizen_type: number;
+  @Column({ name: 'id_citizen_type' })
+  citizenTypeId: number;
 
-  @Column()
-  id_civil_state_type: number;
+  @Column({ name: 'id_civil_state_type' })
+  civilStateTypeId: number;
 
-  @Column()
-  id_employment_type: number;
+  @Column({ name: 'id_employment_type' })
+  employmentTypeId: number;
 
-  @Column()
-  id_guardianship_type: number;
+  @Column({ name: 'id_guardianship_type' })
+  guardianshipTypeId: number;
 
-  @Column()
-  id_education_type: number;
+  @Column({ name: 'id_education_type' })
+  educationTypeId: number;
 
-  @Column()
-  id_authorization_type: number;
+  @Column({ name: 'id_authorization_type' })
+  authorizationTypeId: number;
 
-  @Column()
-  id_turn: number;
+  @Column({ name: 'id_turn' })
+  turnId: number;
 
   @Column({ name: 'id_church' })
   parishId: number;
