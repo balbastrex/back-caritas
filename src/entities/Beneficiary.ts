@@ -1,14 +1,14 @@
 import {
   BaseEntity,
   Column, CreateDateColumn,
-  Entity,
+  Entity, JoinColumn, ManyToOne,
   OneToMany, PrimaryGeneratedColumn, UpdateDateColumn,
 } from 'typeorm';
 import { DistributionTypes } from '../utils/constants';
 import { ColumnNumericTransformer } from '../utils/decimal.transformer';
 import { Parish } from './Parish';
 
-@Entity({ name: 'beneficiary',  synchronize: false })
+@Entity({ name: 'beneficiary',  synchronize: true })
 export class Beneficiary extends BaseEntity {
 
   @PrimaryGeneratedColumn('increment')
@@ -16,9 +16,6 @@ export class Beneficiary extends BaseEntity {
 
   @Column()
   license: number;
-
-  @Column()
-  id_church: number;
 
   @Column({ length: 16 })
   cif: string;
@@ -62,8 +59,8 @@ export class Beneficiary extends BaseEntity {
   @Column()
   free: boolean;
 
-  @Column()
-  nationality: number;
+  @Column({ name: 'nationality' })
+  nationalityId: number;
 
   @Column()
   birth_date: Date;
@@ -81,30 +78,6 @@ export class Beneficiary extends BaseEntity {
   gender: string;
 
   @Column()
-  id_family_type: number;
-
-  @Column()
-  id_citizen_type: number;
-
-  @Column()
-  id_civil_state_type: number;
-
-  @Column()
-  id_employment_type: number;
-
-  @Column()
-  id_guardianship_type: number;
-
-  @Column()
-  id_education_type: number;
-
-  @Column()
-  id_authorization_type: number;
-
-  @Column()
-  id_turn: number;
-
-  @Column()
   gratuitous: number;
 
   @Column()
@@ -115,6 +88,37 @@ export class Beneficiary extends BaseEntity {
 
   @Column({ default: true })
   needs_print: boolean;
+
+  @Column({ name: 'id_family_type' })
+  familyTypeId: number;
+
+  @Column({ name: 'id_citizen_type' })
+  citizenTypeId: number;
+
+  @Column({ name: 'id_civil_state_type' })
+  civilStateTypeId: number;
+
+  @Column({ name: 'id_employment_type' })
+  employmentTypeId: number;
+
+  @Column({ name: 'id_guardianship_type' })
+  guardianshipTypeId: number;
+
+  @Column({ name: 'id_education_type' })
+  educationTypeId: number;
+
+  @Column({ name: 'id_authorization_type' })
+  authorizationTypeId: number;
+
+  @Column({ name: 'id_turn' })
+  turnId: number;
+
+  @Column({ name: 'id_church' })
+  parishId: number;
+
+  @ManyToOne(() => Parish, parish => parish.beneficiaries)
+  @JoinColumn({ name: 'id_church' })
+  parish: Parish;
 
   @CreateDateColumn()
   created

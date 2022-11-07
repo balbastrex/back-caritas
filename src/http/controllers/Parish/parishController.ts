@@ -5,9 +5,7 @@ import { BeneficiaryParishResource } from './BeneficiaryParishResource';
 import { ParishResource } from './ParishResource';
 
 export const ParishIndex = async (request: Request, response: Response) => {
-  let parishes: Parish[];
-
-  parishes = await Parish.find(response.locals.findQuery);
+  const parishes = await Parish.find(response.locals.findQuery);
 
   const parishesResources = parishes.map(parish => new ParishResource(parish));
 

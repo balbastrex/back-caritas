@@ -16,7 +16,7 @@ const parishParamPolicies = (req: Request, res: Response, next: Function) => {
   if (res.locals.profileId === 2) {
     res.locals.findQuery = {
       ...res.locals.findQuery,
-      id_economato: res.locals.marketId
+      marketId: res.locals.marketId
     }
   }
 

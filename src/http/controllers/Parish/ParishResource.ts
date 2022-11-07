@@ -8,6 +8,7 @@ export class ParishResource {
   email: string;
   phone: string;
   contact: string;
+  marketId: number;
 
   constructor(parish: Parish) {
     this.id = parish.id;
@@ -17,5 +18,6 @@ export class ParishResource {
     this.email = parish.email;
     this.phone = parish.phone;
     this.contact = parish.contact;
+    this.marketId = parish.marketId
   }
 }
