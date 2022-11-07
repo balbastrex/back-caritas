@@ -56,7 +56,6 @@ export class BeneficiaryResource {
     this.state = beneficiary.state;
     this.zip = beneficiary.zip;
     this.free = beneficiary.free;
-    this.parishId = beneficiary.parishId;
     this.nationalityId = beneficiary.nationalityId;
     this.birthDate = beneficiary.birth_date
     this.childrenUnder18 = isNull(beneficiary.children_under_18) ? 0 : beneficiary.children_under_18;
@@ -67,7 +66,7 @@ export class BeneficiaryResource {
     this.gratuitous = beneficiary.gratuitous;
     this.sice = beneficiary.sice;
     this.needsPrint = beneficiary.needs_print;
-
+    
     this.familyTypeId = isNull(beneficiary.familyTypeId) ? 0 : beneficiary.familyTypeId;
     this.citizenTypeId = isNull(beneficiary.citizenTypeId) ? 0 : beneficiary.citizenTypeId;
     this.civilStateTypeId = isNull(beneficiary.civilStateTypeId) ? 0 : beneficiary.civilStateTypeId;
@@ -75,6 +74,7 @@ export class BeneficiaryResource {
     this.guardianshipTypeId = isNull(beneficiary.guardianshipTypeId) ? 0 : beneficiary.guardianshipTypeId;
     this.educationTypeId = isNull(beneficiary.educationTypeId) ? 0 : beneficiary.educationTypeId;
     this.authorizationTypeId = isNull(beneficiary.authorizationTypeId) ? 0 : beneficiary.authorizationTypeId;
+    this.parishId = beneficiary.parishId;
     this.turnId = isNull(beneficiary.turnId) ? 0 : beneficiary.turnId;
   }
 }

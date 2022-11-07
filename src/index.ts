@@ -59,8 +59,6 @@ app.use('/api/v1/parish/:id', parishParamPolicies);
 app.use('/api/v1/beneficiary', beneficiaryGeneralPolicy);
 app.use('/api/v1/beneficiary/:id', beneficiaryParamPolicies);
 
-app.use('/api/v1/parish/:id/turn', turnParamPolicies);
-
 app.use(userRoutes);
 app.use(marketRoutes);
 app.use(parishRoutes);
