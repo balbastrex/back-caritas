@@ -4,7 +4,6 @@ import { getRepository } from 'typeorm';
 import { User } from '../../../entities/User';
 import * as bcrypt from 'bcrypt';
 import logger from 'npmlog';
-import { UserResource } from '../User/UserResource';
 require('dotenv').config()
 
 const Login = async (request: Request, response: Response) => {
@@ -32,7 +31,6 @@ const Login = async (request: Request, response: Response) => {
           id: user.id,
           name: user.name,
           lastName: user.lastName,
-          userName: user.userName,
           email: user.email,
           profileId: user.profileId,
           marketId: user.marketId,
@@ -44,7 +42,6 @@ const Login = async (request: Request, response: Response) => {
         logger.info('Login', `${user.name} logged successfully`);
         return response.status(200).json({
           status: 'Logged in successfully',
-          user: new UserResource(user),
           token: jwtToken,
         });
       }

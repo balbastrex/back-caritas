@@ -14,8 +14,8 @@ export class Product extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column()
-  id_economato: number;
+  @Column({ name: 'id_economato' })
+  marketId: number;
 
   @Column({ length: 128 })
   name: string;
@@ -53,7 +53,7 @@ export class Product extends BaseEntity {
   @Column({ default: true })
   available: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'date' })
   created
   @UpdateDateColumn()
   updated

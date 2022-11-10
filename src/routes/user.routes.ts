@@ -1,9 +1,8 @@
 import { Router } from 'express';
-import { Me, UserIndex } from '../http/controllers/User/userController';
+import { UserIndex } from '../http/controllers/User/userController';
 
 const router = Router();
 
-router.get('/api/v1/user/me', Me);
 router.get('/api/v1/user', UserIndex);
 
 export default router;

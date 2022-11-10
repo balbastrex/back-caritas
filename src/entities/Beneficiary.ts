@@ -1,11 +1,13 @@
 import {
   BaseEntity,
-  Column, CreateDateColumn,
-  Entity, JoinColumn, ManyToOne,
-  OneToMany, PrimaryGeneratedColumn, UpdateDateColumn,
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { DistributionTypes } from '../utils/constants';
-import { ColumnNumericTransformer } from '../utils/decimal.transformer';
 import { Parish } from './Parish';
 
 @Entity({ name: 'beneficiary',  synchronize: true })

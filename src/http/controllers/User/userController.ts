@@ -13,20 +13,3 @@ export const UserIndex = async (request: Request, response: Response) => {
 
   return response.status(200).json(usersResource);
 }
-
-export const Me = async (request: Request, response: Response) => {
-
-  const user: User = await User.findByEmail(response.locals.email);
-
-  if (!user) {
-    return response.status(404).json({
-      status: 'User not found',
-    });
-  }
-
-  const userResource = new UserResource(user);
-
-  return response.status(200).json({
-    user: userResource
-  });
-}
