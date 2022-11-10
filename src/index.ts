@@ -11,7 +11,7 @@ import marketGeneralPolicy from './http/middleware/policies/MarketGeneralPolicy'
 import marketParamPolicies from './http/middleware/policies/MarketParamPolicies';
 import parishGeneralPolicy from './http/middleware/policies/ParishGeneralPolicy';
 import parishParamPolicies from './http/middleware/policies/ParishParamPolicies';
-import turnParamPolicies from './http/middleware/policies/TurnParamPolicies';
+import productGeneralPolicy from './http/middleware/policies/ProductGeneralPolicy';
 import verifyToken from './http/middleware/VerifyToken';
 
 import userRoutes from './routes/user.routes';
@@ -27,6 +27,7 @@ import guardianshipTypeRoutes from './routes/guardianshipType.routes';
 import educationTypeRoutes from './routes/educationType.routes';
 import authorizationTypeRoutes from './routes/authorizationType.routes';
 import turnRoutes from './routes/turn.routes';
+import productRoutes from './routes/product.routes';
 
 dotenv.config();
 
@@ -59,6 +60,8 @@ app.use('/api/v1/parish/:id', parishParamPolicies);
 app.use('/api/v1/beneficiary', beneficiaryGeneralPolicy);
 app.use('/api/v1/beneficiary/:id', beneficiaryParamPolicies);
 
+app.use('/api/v1/product', productGeneralPolicy);
+
 app.use(userRoutes);
 app.use(marketRoutes);
 app.use(parishRoutes);
@@ -73,6 +76,7 @@ app.use(guardianshipTypeRoutes);
 app.use(educationTypeRoutes);
 app.use(authorizationTypeRoutes);
 app.use(turnRoutes);
+app.use(productRoutes);
 
 app.listen(PORT, () => {
   console.log(`server started at http://localhost:${PORT}`);

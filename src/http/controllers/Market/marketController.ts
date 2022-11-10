@@ -58,7 +58,7 @@ export const ProductsMarketIndex = async (request: Request, response: Response) 
   }
 
   const products = await Product.createQueryBuilder('product')
-    .where('product.id_economato = :marketId', { marketId })
+    .where('product.marketId = :marketId', { marketId })
     .orderBy({
       'product.id': 'ASC'
     })

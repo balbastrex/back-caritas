@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { verify } from 'jsonwebtoken';
 
 const verifyToken = (req: Request, res: Response, next: Function) => {
+  console.log('==> VerifyTokenPolicy')
   const authHeader = req.get('Authorization');
   const authPrefix = authHeader && authHeader.split(' ')[0];
   const token = authHeader && authHeader.split(' ')[1];

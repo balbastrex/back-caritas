@@ -16,7 +16,7 @@ const parishGeneralPolicy = (req: Request, res: Response, next: Function) => {
   if (res.locals.profileId === 2) {
     res.locals.findQuery = {
       where: {
-        parish: { id_economato: res.locals.marketId },
+        parish: { marketId: res.locals.marketId },
       },
       relations: ["parish"],
     }
