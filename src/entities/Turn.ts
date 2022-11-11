@@ -1,9 +1,11 @@
 import {
   BaseEntity,
   Column, CreateDateColumn,
-  Entity,
+  Entity, JoinColumn, ManyToOne, OneToMany,
   PrimaryGeneratedColumn, UpdateDateColumn,
 } from 'typeorm';
+import { Beneficiary } from './Beneficiary';
+import { Market } from './Market';
 
 @Entity({ name: 'turn',  synchronize: false })
 export class Turn extends BaseEntity {
@@ -19,6 +21,17 @@ export class Turn extends BaseEntity {
 
   @Column({ length: 256 })
   description: string;
+
+  @ManyToOne(() => Market, market => market.turns)
+  @JoinColumn({ name: 'id_economato' })
+  market: Market;
+
+  @OneToMany(() => Beneficiary, beneficiary => beneficiary.turn,
+    {
+      onDelete: 'NO ACTION',
+      onUpdate: 'NO ACTION'
+    })
+  beneficiaries: Beneficiary[];
 
   @CreateDateColumn()
   created

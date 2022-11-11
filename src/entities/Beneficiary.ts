@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Parish } from './Parish';
+import { Turn } from './Turn';
 
 @Entity({ name: 'beneficiary',  synchronize: true })
 export class Beneficiary extends BaseEntity {
@@ -121,6 +122,10 @@ export class Beneficiary extends BaseEntity {
   @ManyToOne(() => Parish, parish => parish.beneficiaries)
   @JoinColumn({ name: 'id_church' })
   parish: Parish;
+
+  @ManyToOne(() => Turn, turn => turn.beneficiaries)
+  @JoinColumn({ name: 'id_turn' })
+  turn: Turn;
 
   @CreateDateColumn()
   created

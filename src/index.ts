@@ -12,6 +12,8 @@ import marketParamPolicies from './http/middleware/policies/MarketParamPolicies'
 import parishGeneralPolicy from './http/middleware/policies/ParishGeneralPolicy';
 import parishParamPolicies from './http/middleware/policies/ParishParamPolicies';
 import productGeneralPolicy from './http/middleware/policies/ProductGeneralPolicy';
+import turnGeneralPolicy from './http/middleware/policies/TurnGeneralPolicy';
+import turnParamPolicies from './http/middleware/policies/TurnParamPolicies';
 import verifyToken from './http/middleware/VerifyToken';
 
 import userRoutes from './routes/user.routes';
@@ -61,6 +63,9 @@ app.use('/api/v1/beneficiary', beneficiaryGeneralPolicy);
 app.use('/api/v1/beneficiary/:id', beneficiaryParamPolicies);
 
 app.use('/api/v1/product', productGeneralPolicy);
+
+app.use('/api/v1/turn', turnGeneralPolicy);
+app.use('/api/v1/turn/:id', turnParamPolicies);
 
 app.use(userRoutes);
 app.use(marketRoutes);

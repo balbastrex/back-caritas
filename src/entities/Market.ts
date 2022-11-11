@@ -7,6 +7,7 @@ import {
 import { DistributionTypes } from '../utils/constants';
 import { ColumnNumericTransformer } from '../utils/decimal.transformer';
 import { Parish } from './Parish';
+import { Turn } from './Turn';
 
 @Entity({ name: 'economato',  synchronize: false })
 export class Market extends BaseEntity {
@@ -50,5 +51,12 @@ export class Market extends BaseEntity {
       onUpdate: 'NO ACTION'
     })
   parishes: Parish[];
+
+  @OneToMany(() => Turn, turn => turn.market,
+    {
+      onDelete: 'NO ACTION',
+      onUpdate: 'NO ACTION'
+    })
+  turns: Turn[];
 
 }
