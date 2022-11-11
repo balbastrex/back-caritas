@@ -76,6 +76,7 @@ export const ProductCreate = async (request: Request, response: Response) => {
   }
 
   const product = new Product();
+  product.marketId = marketId;
 
   await fillAndSaveProduct(product, request);
 
