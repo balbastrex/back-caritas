@@ -10,5 +10,13 @@ export enum UserProfiles {
   COMPRAS = 3,
   CAJA_PEDIDOS = 4,
   GESTOR_PARROQUIA = 5
+}
 
+export const MarketColors = {
+  1: '#f30606',
+  2: '#1544e0',
+  3: '#4ea42c',
+  4: '#6b1dcc',
+  5: '#f5dc15',
+  6: '#50c9a4',
 }

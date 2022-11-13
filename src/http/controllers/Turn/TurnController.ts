@@ -57,7 +57,6 @@ export const TurnUpdate = async (request: Request, response: Response) => {
 
 export const TurnStore = async (request: Request, response: Response) => {
   const marketId = response.locals.marketId;
-  console.log('==> marketId ', marketId)
 
   if (!marketId) {
     return response.status(404).json({ message: 'No tienes autorización para crear un turno.' });
