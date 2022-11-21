@@ -20,3 +20,11 @@ export const MarketColors = {
   5: '#f5dc15',
   6: '#50c9a4',
 }
+
+export enum OrderStatuses {
+  ABIERTO = 'Abierto',
+  CERRADO = 'Cerrado',
+  CANCELADO = 'Cancelado',
+  PENDIENTE = 'Pendiente',
+  PAGADO = 'Pagado',
+}

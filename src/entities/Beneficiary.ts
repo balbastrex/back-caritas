@@ -4,10 +4,12 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne,
+  ManyToOne, OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Order } from './Order';
+import { OrderLine } from './OrderLine';
 import { Parish } from './Parish';
 import { Turn } from './Turn';
 
@@ -126,6 +128,13 @@ export class Beneficiary extends BaseEntity {
   @ManyToOne(() => Turn, turn => turn.beneficiaries)
   @JoinColumn({ name: 'id_turn' })
   turn: Turn;
+
+  @OneToMany(() => Order, order => order.beneficiary,
+    {
+      onDelete: 'NO ACTION',
+      onUpdate: 'NO ACTION'
+    })
+  orders: Order[];
 
   @CreateDateColumn()
   created

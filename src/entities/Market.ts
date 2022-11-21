@@ -6,6 +6,7 @@ import {
 } from 'typeorm';
 import { DistributionTypes } from '../utils/constants';
 import { ColumnNumericTransformer } from '../utils/decimal.transformer';
+import { Order } from './Order';
 import { Parish } from './Parish';
 import { Service } from './Service';
 import { Turn } from './Turn';
@@ -59,6 +60,13 @@ export class Market extends BaseEntity {
       onUpdate: 'NO ACTION'
     })
   turns: Turn[];
+
+  @OneToMany(() => Order, order => order.market,
+    {
+      onDelete: 'NO ACTION',
+      onUpdate: 'NO ACTION'
+    })
+  orders: Order[];
 
   @OneToMany(() => Service, service => service.market,
     {

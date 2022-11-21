@@ -5,17 +5,17 @@ import express, { Express } from 'express';
 import helmet from 'helmet';
 import { createConnections } from 'typeorm';
 import Login from './http/controllers/Auth/login';
-import beneficiaryGeneralPolicy from './http/middleware/policies/BeneficiaryGeneralPolicy';
-import beneficiaryParamPolicies from './http/middleware/policies/BeneficiaryParamPolicies';
-import marketGeneralPolicy from './http/middleware/policies/MarketGeneralPolicy';
-import marketParamPolicies from './http/middleware/policies/MarketParamPolicies';
-import parishGeneralPolicy from './http/middleware/policies/ParishGeneralPolicy';
-import parishParamPolicies from './http/middleware/policies/ParishParamPolicies';
-import productGeneralPolicy from './http/middleware/policies/ProductGeneralPolicy';
-import serviceGeneralPolicy from './http/middleware/policies/ServiceGeneralPolicy';
-import serviceParamPolicies from './http/middleware/policies/ServiceParamPolicies';
-import turnGeneralPolicy from './http/middleware/policies/TurnGeneralPolicy';
-import turnParamPolicies from './http/middleware/policies/TurnParamPolicies';
+import beneficiaryGeneralPolicy from './http/middleware/policies/BeneficiaryPolicies/BeneficiaryGeneralPolicy';
+import beneficiaryParamPolicies from './http/middleware/policies/BeneficiaryPolicies/BeneficiaryParamPolicies';
+import marketGeneralPolicy from './http/middleware/policies/MarketPolicies/MarketGeneralPolicy';
+import marketParamPolicies from './http/middleware/policies/MarketPolicies/MarketParamPolicies';
+import parishGeneralPolicy from './http/middleware/policies/ParishPolicies/ParishGeneralPolicy';
+import parishParamPolicies from './http/middleware/policies/ParishPolicies/ParishParamPolicies';
+import productGeneralPolicy from './http/middleware/policies/ProductPolicies/ProductGeneralPolicy';
+import serviceGeneralPolicy from './http/middleware/policies/ServicePolicies/ServiceGeneralPolicy';
+import serviceParamPolicies from './http/middleware/policies/ServicePolicies/ServiceParamPolicies';
+import turnGeneralPolicy from './http/middleware/policies/TurnPolicies/TurnGeneralPolicy';
+import turnParamPolicies from './http/middleware/policies/TurnPolicies/TurnParamPolicies';
 import verifyToken from './http/middleware/VerifyToken';
 
 import userRoutes from './routes/user.routes';
@@ -33,6 +33,7 @@ import authorizationTypeRoutes from './routes/authorizationType.routes';
 import turnRoutes from './routes/turn.routes';
 import productRoutes from './routes/product.routes';
 import serviceRoutes from './routes/service.routes';
+import orderRoutes from './routes/order.routes';
 
 dotenv.config();
 
@@ -89,6 +90,7 @@ app.use(authorizationTypeRoutes);
 app.use(turnRoutes);
 app.use(productRoutes);
 app.use(serviceRoutes);
+app.use(orderRoutes);
 
 app.listen(PORT, () => {
   console.log(`server started at http://localhost:${PORT}`);
