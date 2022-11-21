@@ -13,6 +13,7 @@ import parishGeneralPolicy from './http/middleware/policies/ParishGeneralPolicy'
 import parishParamPolicies from './http/middleware/policies/ParishParamPolicies';
 import productGeneralPolicy from './http/middleware/policies/ProductGeneralPolicy';
 import serviceGeneralPolicy from './http/middleware/policies/ServiceGeneralPolicy';
+import serviceParamPolicies from './http/middleware/policies/ServiceParamPolicies';
 import turnGeneralPolicy from './http/middleware/policies/TurnGeneralPolicy';
 import turnParamPolicies from './http/middleware/policies/TurnParamPolicies';
 import verifyToken from './http/middleware/VerifyToken';
@@ -70,6 +71,7 @@ app.use('/api/v1/turn', turnGeneralPolicy);
 app.use('/api/v1/turn/:id', turnParamPolicies);
 
 app.use('/api/v1/service', serviceGeneralPolicy);
+app.use('/api/v1/service/:id', serviceParamPolicies);
 
 app.use(userRoutes);
 app.use(marketRoutes);
