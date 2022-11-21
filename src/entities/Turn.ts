@@ -6,6 +6,7 @@ import {
 } from 'typeorm';
 import { Beneficiary } from './Beneficiary';
 import { Market } from './Market';
+import { Service } from './Service';
 
 @Entity({ name: 'turn',  synchronize: false })
 export class Turn extends BaseEntity {
@@ -32,6 +33,13 @@ export class Turn extends BaseEntity {
       onUpdate: 'NO ACTION'
     })
   beneficiaries: Beneficiary[];
+
+  @OneToMany(() => Service, service => service.turn,
+    {
+      onDelete: 'NO ACTION',
+      onUpdate: 'NO ACTION'
+    })
+  services: Service[];
 
   @CreateDateColumn()
   created
