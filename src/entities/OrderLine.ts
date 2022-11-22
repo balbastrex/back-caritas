@@ -52,9 +52,4 @@ export class OrderLine extends BaseEntity {
   @ManyToOne(() => Product, product => product.orderLines)
   @JoinColumn({ name: 'id_product' })
   product: Product;
-
-  /*@CreateDateColumn({ type: 'date' })
-  created
-  @UpdateDateColumn()
-  updated*/
 }

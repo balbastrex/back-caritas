@@ -25,6 +25,6 @@ export enum OrderStatuses {
   ABIERTO = 'Abierto',
   CERRADO = 'Cerrado',
   CANCELADO = 'Cancelado',
-  PENDIENTE = 'Pendiente',
+  // PENDIENTE = 'Pendiente',
   PAGADO = 'Pagado',
 }
