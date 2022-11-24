@@ -8,6 +8,7 @@ export class OrderResource {
   status: string;
   marketId: number;
   marketName: string;
+  beneficiaryId: number;
   beneficiaryName: string;
   userName: string;
   orderLines: OrderLineResource[];
@@ -20,6 +21,7 @@ export class OrderResource {
     this.status = order.status;
     this.marketId = order.marketId;
     this.marketName = order.market.name;
+    this.beneficiaryId = order.beneficiaryId
     this.beneficiaryName = order.beneficiary?.firstname + ' ' + order.beneficiary?.lastname1 + ' ' + order.beneficiary?.lastname2;
     this.userName = order.user.name;
     this.createdAt = new Date(order.created).getTime();

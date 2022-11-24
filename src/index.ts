@@ -9,6 +9,7 @@ import beneficiaryGeneralPolicy from './http/middleware/policies/BeneficiaryPoli
 import beneficiaryParamPolicies from './http/middleware/policies/BeneficiaryPolicies/BeneficiaryParamPolicies';
 import marketGeneralPolicy from './http/middleware/policies/MarketPolicies/MarketGeneralPolicy';
 import marketParamPolicies from './http/middleware/policies/MarketPolicies/MarketParamPolicies';
+import orderGeneralPolicy from './http/middleware/policies/OrderPolicies/OrderGeneralPolicy';
 import parishGeneralPolicy from './http/middleware/policies/ParishPolicies/ParishGeneralPolicy';
 import parishParamPolicies from './http/middleware/policies/ParishPolicies/ParishParamPolicies';
 import productGeneralPolicy from './http/middleware/policies/ProductPolicies/ProductGeneralPolicy';
@@ -73,6 +74,8 @@ app.use('/api/v1/turn/:id', turnParamPolicies);
 
 app.use('/api/v1/service', serviceGeneralPolicy);
 app.use('/api/v1/service/:id', serviceParamPolicies);
+
+app.use('/api/v1/order', orderGeneralPolicy);
 
 app.use(userRoutes);
 app.use(marketRoutes);
