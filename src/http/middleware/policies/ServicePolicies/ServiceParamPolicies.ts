@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
-import { UserProfiles } from '../../../utils/constants';
+import { UserProfiles } from '../../../../utils/constants';
 
-const serviceGeneralPolicy = (req: Request, res: Response, next: Function) => {
-  console.log('==> ServiceGeneralPolicy')
+const serviceParamPolicies = (req: Request, res: Response, next: Function) => {
+  console.log('==> ServiceParamsPolicy')
 
+  res.locals.findQuery = {};
   if (res.locals.profileId === UserProfiles.COMPRAS ||
     res.locals.profileId === UserProfiles.CAJA_PEDIDOS ||
     res.locals.profileId === UserProfiles.GESTOR_PARROQUIA) {
@@ -11,18 +12,16 @@ const serviceGeneralPolicy = (req: Request, res: Response, next: Function) => {
       status: 'Forbidden',
     });
   }
+  res.locals.findQuery = { id: req.params.id };
 
-  res.locals.findQuery = { relations: ["turn", "market"] };
   if (res.locals.profileId === UserProfiles.DIRECTOR_ECONOMATO) {
     res.locals.findQuery = {
-      where: {
-        marketId: res.locals.marketId,
-      },
-      relations: ["turn", "market"],
+      ...res.locals.findQuery,
+      marketId: res.locals.marketId
     }
   }
 
   next();
 };
 
-export default serviceGeneralPolicy;
+export default serviceParamPolicies;

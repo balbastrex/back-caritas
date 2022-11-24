@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { UserProfiles } from '../../../utils/constants';
+import { UserProfiles } from '../../../../utils/constants';
 
 const turnParamPolicies = (req: Request, res: Response, next: Function) => {
   console.log('==> TurnParamsPolicy')

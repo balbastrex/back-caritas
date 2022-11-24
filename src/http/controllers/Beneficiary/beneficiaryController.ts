@@ -1,14 +1,23 @@
 import { Request, Response } from 'express';
 import { Beneficiary } from '../../../entities/Beneficiary';
+import { BeneficiaryIdNameResource } from './BeneficiaryIdNameResource';
 import { BeneficiaryResource } from './BeneficiaryResource';
 
 export const BeneficiaryIndex = async (request: Request, response: Response) => {
-  const beneficiaries = await Beneficiary.find(response.locals.findQuery);
+  const beneficiaries = await Beneficiary.find({ ...response.locals.findQuery, take: 50 });
 
   const BeneficiariesResources = beneficiaries.map(beneficiary => new BeneficiaryResource(beneficiary));
 
   return response.status(200).json(BeneficiariesResources);
 };
+
+export const BeneficiaryIndexIdName = async (request: Request, response: Response) => {
+  const beneficiaries = await Beneficiary.find({ ...response.locals.findQuery, select: ['id', 'firstname', 'lastname1', 'lastname2'], take: 50 });
+
+  const BeneficiariesResources = beneficiaries.map(beneficiary => new BeneficiaryIdNameResource(beneficiary));
+
+  return response.status(200).json(BeneficiariesResources);
+}
 
 export const BeneficiaryShow = async (request: Request, response: Response) => {
   const beneficiary: Beneficiary = await Beneficiary.findOne(response.locals.findQuery);

@@ -4,10 +4,11 @@ import {
   BeforeUpdate,
   Column,
   CreateDateColumn,
-  Entity,
+  Entity, OneToMany,
   PrimaryGeneratedColumn, UpdateDateColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Order } from './Order';
 
 @Entity('usuario', {synchronize: false})
 export class User extends BaseEntity{
@@ -44,6 +45,13 @@ export class User extends BaseEntity{
 
   @Column({ name: 'id_church' })
   parishId: string;
+
+  @OneToMany(() => Order, order => order.user,
+    {
+      onDelete: 'NO ACTION',
+      onUpdate: 'NO ACTION'
+    })
+  orders: Order[];
 
   @CreateDateColumn({ name: 'created' })
   created_at

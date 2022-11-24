@@ -2,11 +2,12 @@ import {
   BaseEntity,
   Column,
   CreateDateColumn,
-  Entity,
+  Entity, OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { ColumnNumericTransformer } from '../utils/decimal.transformer';
+import { OrderLine } from './OrderLine';
 
 @Entity({ name: 'product',  synchronize: false })
 export class Product extends BaseEntity {
@@ -52,6 +53,13 @@ export class Product extends BaseEntity {
 
   @Column({ default: true })
   available: boolean;
+
+  @OneToMany(() => OrderLine, orderLine => orderLine.product,
+    {
+      onDelete: 'NO ACTION',
+      onUpdate: 'NO ACTION'
+    })
+  orderLines: OrderLine[];
 
   @CreateDateColumn({ type: 'date' })
   created
