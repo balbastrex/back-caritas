@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { Beneficiary } from '../../../entities/Beneficiary';
 import { Order } from '../../../entities/Order';
 import { OrderLine } from '../../../entities/OrderLine';
-import { Parish } from '../../../entities/Parish';
 import { OrderStatuses } from '../../../utils/constants';
 import { OrderResource } from './OrderResource';
 
@@ -34,22 +33,6 @@ export const OrderShow = async (request: Request, response: Response) => {
 }
 
 export const OrderStore = async (request: Request, response: Response) => {
-  const beneficiary = await Beneficiary.findOne(request.body.beneficiaryId);
-
-  if (!beneficiary) {
-    return response.status(404).json({ message: 'Beneficiary not found.' });
-  }
-
-  const parish = await Parish.findOne(beneficiary.parishId);
-
-  if (!parish) {
-    return response.status(404).json({ message: 'Parish not found.' });
-  }
-
-  if (parish.marketId !== response.locals.marketId) {
-    return response.status(403).json({ message: 'Forbidden.' });
-  }
-
   const amount = request.body.orderLines.reduce((total: number, orderLine: any) => {
     return total + orderLine.price * orderLine.units;
   }, 0);
@@ -59,7 +42,7 @@ export const OrderStore = async (request: Request, response: Response) => {
   order.beneficiaryId = request.body.beneficiaryId;
   order.userId = response.locals.userId;
   order.marketId = response.locals.marketId;
-  order.parishId = parish.id;
+  order.parishId = response.locals.parishId;
 
   order.amount = amount;
   order.gratuitous = 0;
@@ -89,22 +72,6 @@ export const OrderStore = async (request: Request, response: Response) => {
 }
 
 export const OrderUpdate = async (request: Request, response: Response) => {
-  const beneficiary = await Beneficiary.findOne(request.body.beneficiaryId);
-
-  if (!beneficiary) {
-    return response.status(404).json({ message: 'Beneficiary not found.' });
-  }
-
-  const parish = await Parish.findOne(beneficiary.parishId);
-
-  if (!parish) {
-    return response.status(404).json({ message: 'Parish not found.' });
-  }
-
-  if (parish.marketId !== response.locals.marketId) {
-    return response.status(403).json({ message: 'Forbidden.' });
-  }
-
   const amount = request.body.orderLines.reduce((total: number, orderLine: any) => {
     return total + orderLine.price * orderLine.units;
   }, 0);
@@ -114,7 +81,7 @@ export const OrderUpdate = async (request: Request, response: Response) => {
   order.beneficiaryId = request.body.beneficiaryId;
   order.userId = response.locals.userId;
   order.marketId = response.locals.marketId;
-  order.parishId = parish.id;
+  order.parishId = response.locals.parishId;
 
   order.amount = amount;
   order.gratuitous = 0;
@@ -147,13 +114,9 @@ export const OrderUpdate = async (request: Request, response: Response) => {
 }
 
 export const OrderUpdateStatus = async (request: Request, response: Response) => {
-  const order = await Order.findOne(request.params.orderId);
-
-  if (!order) {
-    return response.status(404).json({ message: 'Order not found.' });
-  }
-
   const status = request.params.status;
+  const order = response.locals.order;
+
   switch (status) {
     case OrderStatuses.ABIERTO: order.status = OrderStatuses.ABIERTO; break;
     case OrderStatuses.CANCELADO: order.status = OrderStatuses.CANCELADO; break;
