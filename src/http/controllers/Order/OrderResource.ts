@@ -10,6 +10,7 @@ export class OrderResource {
   marketName: string;
   beneficiaryId: number;
   beneficiaryName: string;
+  beneficiaryFamilyUnit: number;
   userName: string;
   orderLines: OrderLineResource[];
   createdAt: number;
@@ -23,6 +24,7 @@ export class OrderResource {
     this.marketName = order.market.name;
     this.beneficiaryId = order.beneficiaryId
     this.beneficiaryName = order.beneficiary?.firstname + ' ' + order.beneficiary?.lastname1 + ' ' + order.beneficiary?.lastname2;
+    this.beneficiaryFamilyUnit = order.beneficiary.family_unit;
     this.userName = order.user.name;
     this.createdAt = new Date(order.created).getTime();
     this.orderLines = order.orderLines.map(orderLine => new OrderLineResource(orderLine));
