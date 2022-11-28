@@ -8,13 +8,18 @@ const orderParamPolicies = async (req: Request, res: Response, next: Function) =
     return next();
   }
 
+  //  CHECK ALLOWED METHODS
   switch (req.method) {
     case 'GET':
+      //  CHECK ALLOWED PROFILES
       readOrderParamsPolicy(req, res, next);
+      //  SET ALLOWED QUERY PARAMETERS
       break;
     case 'PUT':
     case 'POST':
+      //  CHECK ALLOWED PROFILES
       await writeOrderParamsPolicy(req, res, next);
+    //  SET ALLOWED QUERY PARAMETERS
   }
 };
 

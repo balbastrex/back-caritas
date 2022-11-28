@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
+import { UserProfiles } from '../../../../utils/constants';
 
-const parishGeneralPolicy = (req: Request, res: Response, next: Function) => {
+const beneficiaryGeneralPolicy = (req: Request, res: Response, next: Function) => {
   console.log('==> BeneficiaryGeneralPolicy')
 
-  if (res.locals.profileId === 3 || res.locals.profileId === 4) {
+  if (res.locals.profileId === UserProfiles.COMPRAS || res.locals.profileId === UserProfiles.CAJA_PEDIDOS) {
     return res.status(403).send({
       status: 'Forbidden',
     });
@@ -25,4 +26,4 @@ const parishGeneralPolicy = (req: Request, res: Response, next: Function) => {
   next();
 };
 
-export default parishGeneralPolicy;
+export default beneficiaryGeneralPolicy;

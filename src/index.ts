@@ -7,6 +7,7 @@ import { createConnections } from 'typeorm';
 import Login from './http/controllers/Auth/login';
 import beneficiaryGeneralPolicy from './http/middleware/policies/BeneficiaryPolicies/BeneficiaryGeneralPolicy';
 import beneficiaryParamPolicies from './http/middleware/policies/BeneficiaryPolicies/BeneficiaryParamPolicies';
+import beneficiarySelectorPolicy from './http/middleware/policies/BeneficiaryPolicies/BeneficiarySelectorPolicy';
 import marketGeneralPolicy from './http/middleware/policies/MarketPolicies/MarketGeneralPolicy';
 import marketParamPolicies from './http/middleware/policies/MarketPolicies/MarketParamPolicies';
 import orderGeneralPolicy from './http/middleware/policies/OrderPolicies/OrderGeneralPolicy';
@@ -68,6 +69,7 @@ app.use('/api/v1/parish/:id', parishParamPolicies);
 
 app.use('/api/v1/beneficiary', beneficiaryGeneralPolicy);
 app.use('/api/v1/beneficiary/:id', beneficiaryParamPolicies);
+app.use('/api/v1/beneficiary-selector', beneficiarySelectorPolicy);
 
 app.use('/api/v1/product', productGeneralPolicy);
 

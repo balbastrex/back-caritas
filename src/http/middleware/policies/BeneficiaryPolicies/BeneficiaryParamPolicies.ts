@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-const parishParamPolicies = (req: Request, res: Response, next: Function) => {
+const beneficiaryParamPolicies = (req: Request, res: Response, next: Function) => {
   console.log('==> BeneficiaryParamsPolicy')
 
   res.locals.findQuery = { id: req.params.id };
@@ -9,7 +9,7 @@ const parishParamPolicies = (req: Request, res: Response, next: Function) => {
       where: {
         id: req.params.id,
         parishId: res.locals.parishId,
-        parish: { id_economato: res.locals.marketId },
+        parish: { marketId: res.locals.marketId },
       },
       relations: ["parish"],
     }
@@ -19,7 +19,7 @@ const parishParamPolicies = (req: Request, res: Response, next: Function) => {
     res.locals.findQuery = {
       where: {
         id: req.params.id,
-        parish: { id_economato: res.locals.marketId },
+        parish: { marketId: res.locals.marketId },
       },
       relations: ["parish"],
     }
@@ -28,4 +28,4 @@ const parishParamPolicies = (req: Request, res: Response, next: Function) => {
   next();
 };
 
-export default parishParamPolicies;
+export default beneficiaryParamPolicies;

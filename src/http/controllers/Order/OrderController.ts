@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { Beneficiary } from '../../../entities/Beneficiary';
 import { Order } from '../../../entities/Order';
 import { OrderLine } from '../../../entities/OrderLine';
 import { OrderStatuses } from '../../../utils/constants';
@@ -7,8 +6,8 @@ import { OrderResource } from './OrderResource';
 
 export const OrderIndex = async (request: Request, response: Response) => {
   const orders = await Order.find({
-    ...response.locals.findQuery,
-    order: { created: 'DESC' },
+    where: {...response.locals.findQuery},
+    order: { created: 'DESC', id: 'DESC' },
     relations: ['beneficiary', 'market', 'user', 'orderLines'],
     take: 50
   });
