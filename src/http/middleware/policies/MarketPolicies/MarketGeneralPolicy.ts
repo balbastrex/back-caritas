@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { UserProfiles } from '../../../../utils/constants';
 
 const marketGeneralPolicy = (req: Request, res: Response, next: Function) => {
   console.log('==> MarketGeneralPolicy')
@@ -7,6 +8,14 @@ const marketGeneralPolicy = (req: Request, res: Response, next: Function) => {
     return res.status(403).send({
       status: 'Forbidden',
     });
+  }
+
+  if (req.method === 'POST') {
+    if (res.locals.profileId !== UserProfiles.ADMINISTRADOR) {
+      return res.status(403).send({
+        status: 'Forbidden',
+      });
+    }
   }
 
   res.locals.findQuery = {};
