@@ -44,6 +44,27 @@ export const BeneficiariesParishIndex = async (request: Request, response: Respo
   return response.status(200).json(parishesResponse);
 }
 
+export const ParishStore = async (request: Request, response: Response) => {
+
+  const parish: Parish = await new Parish();
+
+  if (!response.locals.marketId) {
+    return response.status(404).json({ message: 'Market not found.' });
+  }
+
+  parish.marketId = response.locals.marketId;
+  parish.name = request.body.name;
+  parish.city = request.body.city;
+  parish.address = request.body.address;
+  parish.email = request.body.email;
+  parish.phone = request.body.phone;
+  parish.contact = request.body.contact;
+  parish.created = new Date();
+  await parish.save();
+
+  return response.status(200).json({ id: parish.id });
+}
+
 export const ParishUpdate = async (request: Request, response: Response) => {
 
   const parish: Parish = await Parish.findOne(response.locals.findQuery);
