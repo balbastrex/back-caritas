@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { UserProfiles } from '../../../../utils/constants';
 
 const parishGeneralPolicy = (req: Request, res: Response, next: Function) => {
   console.log('==> ParishGeneralPolicy')
@@ -7,6 +8,14 @@ const parishGeneralPolicy = (req: Request, res: Response, next: Function) => {
     return res.status(403).send({
       status: 'Forbidden',
     });
+  }
+
+  if (req.method === 'POST') {
+    if (res.locals.profileId !== UserProfiles.DIRECTOR_ECONOMATO) {
+      return res.status(403).send({
+        status: 'Forbidden',
+      });
+    }
   }
 
   res.locals.findQuery = {};
