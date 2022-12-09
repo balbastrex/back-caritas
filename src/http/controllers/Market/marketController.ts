@@ -69,6 +69,25 @@ export const ProductsMarketIndex = async (request: Request, response: Response) 
   return response.status(200).json(productsResponse);
 }
 
+export const MarketStore = async (request: Request, response: Response) => {
+
+  const market: Market = await new Market()
+
+  market.name = request.body.name;
+  market.address = request.body.address;
+  market.email = request.body.email;
+  market.phone = request.body.phone;
+  market.expenses = request.body.expenses;
+  market.product_percentage = request.body.productPercentage;
+  market.budget_base = request.body.budgetBase;
+  market.budget_adult = request.body.budgetAdult;
+  market.budget_child = request.body.budgetChild;
+  market.distribution_type = request.body.distributionType;
+  await market.save();
+
+  return response.status(200).json({ id: market.id });
+}
+
 export const MarketUpdate = async (request: Request, response: Response) => {
 
   const market: Market = await Market.findOne(response.locals.findQuery);
