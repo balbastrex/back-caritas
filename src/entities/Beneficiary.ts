@@ -13,7 +13,7 @@ import { OrderLine } from './OrderLine';
 import { Parish } from './Parish';
 import { Turn } from './Turn';
 
-@Entity({ name: 'beneficiary',  synchronize: true })
+@Entity({ name: 'beneficiary',  synchronize: false })
 export class Beneficiary extends BaseEntity {
 
   @PrimaryGeneratedColumn('increment')

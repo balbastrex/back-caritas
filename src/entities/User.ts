@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Order } from './Order';
+import { Receipt } from './Receipt';
 
 @Entity('usuario', {synchronize: false})
 export class User extends BaseEntity{
@@ -52,6 +53,13 @@ export class User extends BaseEntity{
       onUpdate: 'NO ACTION'
     })
   orders: Order[];
+
+  @OneToMany(() => Receipt, receipt => receipt.user,
+    {
+      onDelete: 'NO ACTION',
+      onUpdate: 'NO ACTION'
+    })
+  receipts: Receipt[];
 
   @CreateDateColumn({ name: 'created' })
   created_at

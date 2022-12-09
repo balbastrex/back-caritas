@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { ColumnNumericTransformer } from '../utils/decimal.transformer';
 import { OrderLine } from './OrderLine';
+import { ReceiptLine } from './ReceiptLine';
 
 @Entity({ name: 'product',  synchronize: false })
 export class Product extends BaseEntity {
@@ -60,6 +61,13 @@ export class Product extends BaseEntity {
       onUpdate: 'NO ACTION'
     })
   orderLines: OrderLine[];
+
+  @OneToMany(() => ReceiptLine, receiptLine => receiptLine.product,
+    {
+      onDelete: 'NO ACTION',
+      onUpdate: 'NO ACTION'
+    })
+  receiptLines: ReceiptLine[];
 
   @CreateDateColumn({ type: 'date' })
   created

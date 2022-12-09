@@ -8,8 +8,7 @@ export const OrderIndex = async (request: Request, response: Response) => {
   const orders = await Order.find({
     where: {...response.locals.findQuery},
     order: { created: 'DESC', id: 'DESC' },
-    relations: ['beneficiary', 'market', 'user', 'orderLines'],
-    take: 50
+    relations: ['beneficiary', 'market', 'user', 'orderLines']
   });
 
   const ordersResponse: OrderResource[] = orders.map(order => new OrderResource(order));

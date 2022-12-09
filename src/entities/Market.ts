@@ -8,6 +8,8 @@ import { DistributionTypes } from '../utils/constants';
 import { ColumnNumericTransformer } from '../utils/decimal.transformer';
 import { Order } from './Order';
 import { Parish } from './Parish';
+import { Provider } from './Provider';
+import { Receipt } from './Receipt';
 import { Service } from './Service';
 import { Turn } from './Turn';
 
@@ -68,10 +70,24 @@ export class Market extends BaseEntity {
     })
   orders: Order[];
 
+  @OneToMany(() => Receipt, receipt => receipt.market,
+    {
+      onDelete: 'NO ACTION',
+      onUpdate: 'NO ACTION'
+    })
+  receipts: Receipt[];
+
   @OneToMany(() => Service, service => service.market,
     {
       onDelete: 'NO ACTION',
       onUpdate: 'NO ACTION'
     })
   services: Service[];
+
+  @OneToMany(() => Provider, provider => provider.market,
+    {
+      onDelete: 'NO ACTION',
+      onUpdate: 'NO ACTION'
+    })
+  providers: Provider[];
 }
