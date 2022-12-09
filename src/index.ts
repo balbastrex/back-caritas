@@ -16,6 +16,8 @@ import orderStatusParamPolicies from './http/middleware/policies/OrderPolicies/O
 import parishGeneralPolicy from './http/middleware/policies/ParishPolicies/ParishGeneralPolicy';
 import parishParamPolicies from './http/middleware/policies/ParishPolicies/ParishParamPolicies';
 import productGeneralPolicy from './http/middleware/policies/ProductPolicies/ProductGeneralPolicy';
+import providerGeneralPolicy from './http/middleware/policies/ProviderPolicy/ProviderGeneralPolicy';
+import receiptGeneralPolicy from './http/middleware/policies/ReceiptPolicy/ReceiptGeneralPolicy';
 import serviceGeneralPolicy from './http/middleware/policies/ServicePolicies/ServiceGeneralPolicy';
 import serviceParamPolicies from './http/middleware/policies/ServicePolicies/ServiceParamPolicies';
 import turnGeneralPolicy from './http/middleware/policies/TurnPolicies/TurnGeneralPolicy';
@@ -38,6 +40,8 @@ import turnRoutes from './routes/turn.routes';
 import productRoutes from './routes/product.routes';
 import serviceRoutes from './routes/service.routes';
 import orderRoutes from './routes/order.routes';
+import receiptRoutes from './routes/receipt.routes';
+import providerRoutes from './routes/provider.routes';
 
 dotenv.config();
 
@@ -83,6 +87,10 @@ app.use('/api/v1/order', orderGeneralPolicy);
 app.use('/api/v1/order/:orderId/status/:status', orderStatusParamPolicies);
 app.use('/api/v1/order/:id', orderParamPolicies);
 
+app.use('/api/v1/receipt', receiptGeneralPolicy);
+
+app.use('/api/v1/provider', providerGeneralPolicy);
+
 app.use(userRoutes);
 app.use(marketRoutes);
 app.use(parishRoutes);
@@ -100,6 +108,8 @@ app.use(turnRoutes);
 app.use(productRoutes);
 app.use(serviceRoutes);
 app.use(orderRoutes);
+app.use(receiptRoutes);
+app.use(providerRoutes);
 
 app.listen(PORT, () => {
   console.log(`server started at http://localhost:${PORT}`);
