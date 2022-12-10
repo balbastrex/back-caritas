@@ -10,11 +10,24 @@ const beneficiaryGeneralPolicy = (req: Request, res: Response, next: Function) =
     });
   }
 
-  res.locals.findQuery = {};
-  if (res.locals.profileId === 5) {
-    res.locals.findQuery = { parishId: res.locals.parishId };
+  if (req.method === 'POST') {
+    if (res.locals.profileId === UserProfiles.ADMINISTRADOR) {
+      return res.status(403).send({
+        status: 'Forbidden',
+      });
+    }
   }
-  if (res.locals.profileId === 2) {
+
+  res.locals.findQuery = {};
+  if (res.locals.profileId === UserProfiles.GESTOR_PARROQUIA) {
+    res.locals.findQuery = {
+      where: {
+        parishId: res.locals.parishId,
+      },
+      relations: ["parish"],
+    }
+  }
+  if (res.locals.profileId === UserProfiles.DIRECTOR_ECONOMATO) {
     res.locals.findQuery = {
       where: {
         parish: { marketId: res.locals.marketId },

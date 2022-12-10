@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
+import { UserProfiles } from '../../../../utils/constants';
 
 const beneficiaryParamPolicies = (req: Request, res: Response, next: Function) => {
   console.log('==> BeneficiaryParamsPolicy')
 
   res.locals.findQuery = { id: req.params.id };
-  if (res.locals.profileId === 5) {
+  if (res.locals.profileId === UserProfiles.GESTOR_PARROQUIA) {
     res.locals.findQuery = {
       where: {
         id: req.params.id,
@@ -15,7 +16,7 @@ const beneficiaryParamPolicies = (req: Request, res: Response, next: Function) =
     }
   }
 
-  if (res.locals.profileId === 2) {
+  if (res.locals.profileId === UserProfiles.DIRECTOR_ECONOMATO) {
     res.locals.findQuery = {
       where: {
         id: req.params.id,
