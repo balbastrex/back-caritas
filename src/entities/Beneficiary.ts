@@ -4,12 +4,12 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne, OneToMany,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Order } from './Order';
-import { OrderLine } from './OrderLine';
 import { Parish } from './Parish';
 import { Turn } from './Turn';
 
@@ -90,6 +90,9 @@ export class Beneficiary extends BaseEntity {
 
   @Column()
   sice: number;
+
+  @Column()
+  mec: number;
 
   @Column({ default: true })
   needs_print: boolean;
