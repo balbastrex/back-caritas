@@ -29,49 +29,50 @@ export const ProviderIndex = async (request: Request, response: Response) => {
   const turnsResource = turns.map(turn => new TurnMarketResource(turn));
 
   return response.status(200).json(turnsResource);
-};
+};*/
 
-export const TurnShow = async (request: Request, response: Response) => {
-  const turn = await Turn.findOne(response.locals.findQuery);
+export const ProviderShow = async (request: Request, response: Response) => {
+  const provider = await Provider.findOne(response.locals.findQuery);
 
-  if (!turn) {
+  if (!provider) {
     return response.status(404).json({ message: 'Turn not found.' });
   }
 
-  const turnsResource = new TurnResource(turn);
+  const providersResource = new ProviderResource(provider);
 
-  return response.status(200).json(turnsResource);
+  return response.status(200).json(providersResource);
 };
 
-export const TurnUpdate = async (request: Request, response: Response) => {
-  const turn = await Turn.findOne(response.locals.findQuery);
+export const ProviderUpdate = async (request: Request, response: Response) => {
+  const provider = await Provider.findOne(response.locals.findQuery);
 
-  if (!turn) {
-    return response.status(404).json({ message: 'Turn not found.' });
+  if (!provider) {
+    return response.status(404).json({ message: 'Provider not found.' });
   }
 
-  await fillAndSaveTurn(turn, request);
+  await fillAndSaveProvider(provider, request);
 
-  return response.status(200).json({ id: turn.id });
+  return response.status(200).json({ id: provider.id });
 };
 
-export const TurnStore = async (request: Request, response: Response) => {
+export const ProviderStore = async (request: Request, response: Response) => {
   const marketId = response.locals.marketId;
 
   if (!marketId) {
     return response.status(404).json({ message: 'No tienes autorización para crear un turno.' });
   }
 
-  const turn = new Turn();
-  turn.marketId = marketId;
+  const provider = new Provider();
+  provider.marketId = marketId;
+  provider.created = new Date();
+  provider.updated = new Date();
 
-  await fillAndSaveTurn(turn, request);
+  await fillAndSaveProvider(provider, request);
 
-  return response.status(200).json({ id: turn.id });
-};*/
+  return response.status(200).json({ id: provider.id });
+};
 
-async function fillAndSaveTurn(turn: Turn, request: Request) {
-  turn.name = request.body.name;
-  turn.description = request.body.description;
-  await turn.save();
+async function fillAndSaveProvider(provider: Provider, request: Request) {
+  provider.name = request.body.name;
+  await provider.save();
 }

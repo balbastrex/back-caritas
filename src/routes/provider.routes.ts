@@ -1,10 +1,17 @@
 import { Router } from 'express';
-import { ProviderIndex } from '../http/controllers/Provider/ProviderController';
-import { TurnByMarketId, TurnIndex, TurnShow, TurnStore, TurnUpdate } from '../http/controllers/Turn/TurnController';
+import {
+  ProviderIndex,
+  ProviderShow,
+  ProviderStore,
+  ProviderUpdate,
+} from '../http/controllers/Provider/ProviderController';
 
 const router = Router();
 
 router.get('/api/v1/provider', ProviderIndex);
+router.post('/api/v1/provider', ProviderStore);
+router.get('/api/v1/provider/:id', ProviderShow);
+router.put('/api/v1/provider/:id', ProviderUpdate);
 
 
 export default router;

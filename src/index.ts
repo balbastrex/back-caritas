@@ -17,6 +17,7 @@ import parishGeneralPolicy from './http/middleware/policies/ParishPolicies/Paris
 import parishParamPolicies from './http/middleware/policies/ParishPolicies/ParishParamPolicies';
 import productGeneralPolicy from './http/middleware/policies/ProductPolicies/ProductGeneralPolicy';
 import providerGeneralPolicy from './http/middleware/policies/ProviderPolicy/ProviderGeneralPolicy';
+import providerParamPolicies from './http/middleware/policies/ProviderPolicy/ProviderParamPolicies';
 import receiptGeneralPolicy from './http/middleware/policies/ReceiptPolicy/ReceiptGeneralPolicy';
 import serviceGeneralPolicy from './http/middleware/policies/ServicePolicies/ServiceGeneralPolicy';
 import serviceParamPolicies from './http/middleware/policies/ServicePolicies/ServiceParamPolicies';
@@ -90,6 +91,7 @@ app.use('/api/v1/order/:id', orderParamPolicies);
 app.use('/api/v1/receipt', receiptGeneralPolicy);
 
 app.use('/api/v1/provider', providerGeneralPolicy);
+app.use('/api/v1/provider/:id', providerParamPolicies);
 
 app.use(userRoutes);
 app.use(marketRoutes);
