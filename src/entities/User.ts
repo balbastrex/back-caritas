@@ -4,12 +4,13 @@ import {
   BeforeUpdate,
   Column,
   CreateDateColumn,
-  Entity, OneToMany,
+  Entity, JoinColumn, ManyToOne, OneToMany,
   PrimaryGeneratedColumn, UpdateDateColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Order } from './Order';
 import { Receipt } from './Receipt';
+import { Role } from './Role';
 
 @Entity('usuario', {synchronize: false})
 export class User extends BaseEntity{
@@ -39,13 +40,13 @@ export class User extends BaseEntity{
   email: string;
 
   @Column({ name: 'id_perfil' })
-  profileId: string;
+  profileId: number;
 
   @Column({ name: 'id_economato' })
-  marketId: string;
+  marketId: number;
 
   @Column({ name: 'id_church' })
-  parishId: string;
+  parishId: number;
 
   @OneToMany(() => Order, order => order.user,
     {
@@ -61,15 +62,25 @@ export class User extends BaseEntity{
     })
   receipts: Receipt[];
 
+  @ManyToOne(() => Role, role => role.users)
+  @JoinColumn({ name: 'id_perfil' })
+  role: Role;
+
   @CreateDateColumn({ name: 'created' })
   created_at
   @UpdateDateColumn({ name: 'updated' })
   updated_at
 
   @BeforeInsert()
-  @BeforeUpdate()
   async beforeInsert() {
-    this.password = await bcrypt.hash(this.password, process.env.BCRYPT_HASH_ROUND);
+    this.password = bcrypt.hashSync(this.password, 8);
+  }
+
+  @BeforeUpdate()
+  async beforeUpdate() {
+    if (this.password !== undefined && this.password !== null && this.password !== '') {
+      this.password = bcrypt.hashSync(this.password, 8);
+    }
   }
 
   static findByUserName(userName: string) {

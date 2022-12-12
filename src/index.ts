@@ -23,6 +23,8 @@ import serviceGeneralPolicy from './http/middleware/policies/ServicePolicies/Ser
 import serviceParamPolicies from './http/middleware/policies/ServicePolicies/ServiceParamPolicies';
 import turnGeneralPolicy from './http/middleware/policies/TurnPolicies/TurnGeneralPolicy';
 import turnParamPolicies from './http/middleware/policies/TurnPolicies/TurnParamPolicies';
+import userGeneralPolicy from './http/middleware/policies/UserPolicies/UserGeneralPolicy';
+import userParamPolicies from './http/middleware/policies/UserPolicies/UserParamPolicies';
 import verifyToken from './http/middleware/VerifyToken';
 
 import userRoutes from './routes/user.routes';
@@ -92,6 +94,9 @@ app.use('/api/v1/receipt', receiptGeneralPolicy);
 
 app.use('/api/v1/provider', providerGeneralPolicy);
 app.use('/api/v1/provider/:id', providerParamPolicies);
+
+app.use('/api/v1/user', userGeneralPolicy);
+app.use('/api/v1/user/:id', userParamPolicies);
 
 app.use(userRoutes);
 app.use(marketRoutes);
