@@ -38,9 +38,9 @@ export const BeneficiaryShow = async (request: Request, response: Response) => {
 export const BeneficiaryStore = async (request: Request, response: Response) => {
   const beneficiary: Beneficiary = await new Beneficiary();
 
-  if (!response.locals.parishId) {
+  /*if (!response.locals.parishId) {
     return response.status(404).json({ message: 'Parish not found.' });
-  }
+  }*/
 
   beneficiary.firstname = request.body.name;
   beneficiary.lastname1 = request.body.lastname1;
