@@ -68,7 +68,6 @@ export const BeneficiaryStore = async (request: Request, response: Response) => 
   beneficiary.guardianshipTypeId = request.body.guardianshipTypeId;
   beneficiary.educationTypeId = request.body.educationTypeId;
   beneficiary.authorizationTypeId = request.body.authorizationTypeId;
-  beneficiary.mec = 0;
   await beneficiary.save();
 
   return response.status(200).json({ id: beneficiary.id });

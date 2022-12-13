@@ -91,9 +91,6 @@ export class Beneficiary extends BaseEntity {
   @Column()
   sice: number;
 
-  @Column()
-  mec: number;
-
   @Column({ default: true })
   needs_print: boolean;
 
