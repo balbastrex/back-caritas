@@ -21,7 +21,7 @@ const beneficiarySelectorPolicy = (req: Request, res: Response, next: Function) 
   res.locals.findQuery = {
     where: {
       parish: { marketId: res.locals.marketId },
-      sice: Not(IsNull())
+      // sice: Not(IsNull())
     },
     relations: ["parish"],
   }
