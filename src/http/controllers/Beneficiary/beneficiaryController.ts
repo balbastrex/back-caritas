@@ -1,7 +1,10 @@
 import { Request, Response } from 'express';
 import { Beneficiary } from '../../../entities/Beneficiary';
+import { Product } from '../../../entities/Product';
+import { Turn } from '../../../entities/Turn';
 import { BeneficiaryIdNameResource } from './BeneficiaryIdNameResource';
 import { BeneficiaryResource } from './BeneficiaryResource';
+import { BeneficiaryTurnResource } from './BeneficiaryTurnResource';
 
 export const BeneficiaryIndex = async (request: Request, response: Response) => {
   const beneficiaries = await Beneficiary.find({
@@ -109,4 +112,20 @@ export const BeneficiaryUpdate = async (request: Request, response: Response) =>
   await beneficiary.save();
 
   return response.status(200).json({ id: beneficiary.id });
+}
+
+export const BeneficiaryByTurn = async (request: Request, response: Response) => {
+  const turn = await Turn.createQueryBuilder('turn')
+    .where('turn.id = :id', { id: response.locals.findQuery.id })
+    .andWhere('turn.marketId = :marketId', { marketId: response.locals.findQuery.marketId })
+    .leftJoinAndSelect('turn.beneficiaries', 'beneficiary')
+    .getOne();
+
+  if (!turn) {
+    return response.status(404).json({ message: 'Turn not found.' });
+  }
+
+  const BeneficiariesResources = turn.beneficiaries.map(beneficiary => new BeneficiaryTurnResource(beneficiary));
+
+  return response.status(200).json(BeneficiariesResources);
 }
