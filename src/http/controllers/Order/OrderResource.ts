@@ -9,7 +9,9 @@ export class OrderResource {
   marketId: number;
   marketName: string;
   beneficiaryId: number;
+  beneficiaryLicense: number;
   beneficiaryName: string;
+  parishName: string;
   beneficiaryFamilyUnit: number;
   userName: string;
   orderLines: OrderLineResource[];
@@ -23,8 +25,10 @@ export class OrderResource {
     this.marketId = order.marketId;
     this.marketName = order.market.name;
     this.beneficiaryId = order.beneficiaryId
+    this.beneficiaryLicense = order.beneficiary?.license;
     this.beneficiaryName = order.beneficiary?.firstname + ' ' + order.beneficiary?.lastname1 + ' ' + order.beneficiary?.lastname2;
-    this.beneficiaryFamilyUnit = order.beneficiary.family_unit;
+    this.parishName = order.beneficiary?.parish.name;
+    this.beneficiaryFamilyUnit = order.beneficiary?.family_unit;
     this.userName = order.user.name;
     this.createdAt = new Date(order.created).getTime();
     this.orderLines = order.orderLines.map(orderLine => new OrderLineResource(orderLine));

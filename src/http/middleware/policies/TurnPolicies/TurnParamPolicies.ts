@@ -6,7 +6,7 @@ const turnParamPolicies = (req: Request, res: Response, next: Function) => {
 
   res.locals.findQuery = {};
   if (res.locals.profileId === UserProfiles.COMPRAS ||
-    res.locals.profileId === UserProfiles.CAJA_PEDIDOS ||
+    // res.locals.profileId === UserProfiles.CAJA_PEDIDOS ||
     res.locals.profileId === UserProfiles.GESTOR_PARROQUIA) {
       return res.status(404).send({
         message: 'Turn not found.'

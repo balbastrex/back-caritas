@@ -8,7 +8,7 @@ export const OrderIndex = async (request: Request, response: Response) => {
   const orders = await Order.find({
     where: {...response.locals.findQuery},
     order: { created: 'DESC', id: 'DESC' },
-    relations: ['beneficiary', 'market', 'user', 'orderLines']
+    relations: ['beneficiary', 'beneficiary.parish', 'market', 'user', 'orderLines'],
   });
 
   const ordersResponse: OrderResource[] = orders.map(order => new OrderResource(order));
@@ -18,7 +18,7 @@ export const OrderIndex = async (request: Request, response: Response) => {
 
 export const OrderShow = async (request: Request, response: Response) => {
   const order = await Order.findOne(request.params.id, {
-    relations: ['beneficiary', 'market', 'user', 'orderLines'],
+    relations: ['beneficiary', 'beneficiary.parish', 'market', 'user', 'orderLines'],
   });
 
   if (!order) {
