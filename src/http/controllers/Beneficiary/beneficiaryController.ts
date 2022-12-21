@@ -119,13 +119,19 @@ export const BeneficiaryByTurn = async (request: Request, response: Response) =>
     .where('turn.id = :id', { id: response.locals.findQuery.id })
     .andWhere('turn.marketId = :marketId', { marketId: response.locals.findQuery.marketId })
     .leftJoinAndSelect('turn.beneficiaries', 'beneficiary')
+    .leftJoinAndSelect('beneficiary.parish', 'parish')
+    .leftJoinAndSelect('beneficiary.orders', 'orders')
+    .orderBy('beneficiary.license', 'ASC')
     .getOne();
 
   if (!turn) {
     return response.status(404).json({ message: 'Turn not found.' });
   }
 
-  const BeneficiariesResources = turn.beneficiaries.map(beneficiary => new BeneficiaryTurnResource(beneficiary));
+  const BeneficiariesResources = turn.beneficiaries.map(beneficiary => {
+    const lastDateOrder = beneficiary.orders.length > 0 ? beneficiary.orders[beneficiary.orders.length - 1].created : new Date();
+    return new BeneficiaryTurnResource(beneficiary, lastDateOrder);
+  });
 
   return response.status(200).json(BeneficiariesResources);
 }
