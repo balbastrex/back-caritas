@@ -14,6 +14,6 @@ export class TurnMarketResource {
     this.marketId = turn.marketId;
     this.description = turn.description;
     this.marketName = turn.market.name;
-    this.beneficiariesNumber = turn.beneficiaries.length;
+    this.beneficiariesNumber = turn.beneficiaries.filter(beneficiary => beneficiary.expires > new Date()).length;
   }
 }
