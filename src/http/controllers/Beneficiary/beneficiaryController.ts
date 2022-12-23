@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { Beneficiary } from '../../../entities/Beneficiary';
-import { Product } from '../../../entities/Product';
 import { Turn } from '../../../entities/Turn';
 import { BeneficiaryIdNameResource } from './BeneficiaryIdNameResource';
 import { BeneficiaryResource } from './BeneficiaryResource';
@@ -15,15 +14,30 @@ export const BeneficiaryIndex = async (request: Request, response: Response) => 
 
   const BeneficiariesResources = beneficiaries.map(beneficiary => new BeneficiaryResource(beneficiary));
 
+/*  const duplicated = await Beneficiary.createQueryBuilder('beneficiary')
+    .select('beneficiary.license', 'License')
+    .addSelect('COUNT(beneficiary.license)', 'repeated')
+    .groupBy('beneficiary.license')
+    .having('COUNT(beneficiary.license) > 1')
+    .getRawMany();
+
+  console.log(duplicated);*/
+
   return response.status(200).json(BeneficiariesResources);
 };
 
 export const BeneficiaryIndexIdName = async (request: Request, response: Response) => {
-  const beneficiaries = await Beneficiary.find({ ...response.locals.findQuery, select: ['id', 'firstname', 'lastname1', 'lastname2']});
+  const beneficiaries = await Beneficiary.find({
+    ...response.locals.findQuery,
+    relations: ['orders', 'parish', 'parish.market']
+  });
 
-  const BeneficiariesResources = beneficiaries.map(beneficiary => new BeneficiaryIdNameResource(beneficiary));
+  const beneficiariesResources = beneficiaries.map(beneficiary => {
+    const lastDateOrder = beneficiary.orders.length > 0 ? beneficiary.orders[beneficiary.orders.length - 1].created : new Date();
+    return new BeneficiaryIdNameResource(beneficiary, lastDateOrder);
+  });
 
-  return response.status(200).json(BeneficiariesResources);
+  return response.status(200).json(beneficiariesResources);
 }
 
 export const BeneficiaryShow = async (request: Request, response: Response) => {
