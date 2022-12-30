@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { createQueryBuilder } from 'typeorm';
 import { Beneficiary } from '../../../entities/Beneficiary';
 import { Turn } from '../../../entities/Turn';
 import { BeneficiaryIdNameResource } from './BeneficiaryIdNameResource';
@@ -55,6 +56,10 @@ export const BeneficiaryShow = async (request: Request, response: Response) => {
 export const BeneficiaryStore = async (request: Request, response: Response) => {
   const beneficiary: Beneficiary = await new Beneficiary();
 
+  if (await isIdentifyDuplicated(request.body.cif)) {
+    return response.status(404).json({ message: 'Este NIF/NIE ya existe.' });
+  }
+
   /*if (!response.locals.parishId) {
     return response.status(404).json({ message: 'Parish not found.' });
   }*/
@@ -62,7 +67,7 @@ export const BeneficiaryStore = async (request: Request, response: Response) => 
   beneficiary.firstname = request.body.name;
   beneficiary.lastname1 = request.body.lastname1;
   beneficiary.lastname2 = request.body.lastname2;
-  beneficiary.license = request.body.license;
+  beneficiary.license = request.body.license === 0 ? await licenseGenerator(response.locals.marketId) : request.body.license;
   beneficiary.cif = request.body.cif;
   beneficiary.adults = request.body.adults;
   beneficiary.minors = request.body.minors;
@@ -108,7 +113,7 @@ export const BeneficiaryUpdate = async (request: Request, response: Response) =>
   beneficiary.firstname = request.body.name;
   beneficiary.lastname1 = request.body.lastname1;
   beneficiary.lastname2 = request.body.lastname2;
-  beneficiary.license = request.body.license;
+  beneficiary.license = request.body.license === 0 ? await licenseGenerator(response.locals.marketId) : request.body.license;
   beneficiary.cif = request.body.cif;
   beneficiary.adults = request.body.adults;
   beneficiary.minors = request.body.minors;
@@ -120,7 +125,7 @@ export const BeneficiaryUpdate = async (request: Request, response: Response) =>
   beneficiary.state = request.body.state;
   beneficiary.zip = request.body.zip;
   beneficiary.free = request.body.free;
-  beneficiary.nationalityId = request.body.nationalityId;
+  beneficiary.nationalityId = request.body.nationalityId === "" ? null : request.body.nationalityId;
   beneficiary.birth_date = new Date(request.body.birthDate);
   beneficiary.sice = request.body.sice;
   beneficiary.gender = request.body.gender;
@@ -132,13 +137,13 @@ export const BeneficiaryUpdate = async (request: Request, response: Response) =>
 
   beneficiary.parishId = request.body.parishId;
   beneficiary.turnId = request.body.turnId;
-  beneficiary.familyTypeId = request.body.familyTypeId;
-  beneficiary.citizenTypeId = request.body.citizenTypeId;
-  beneficiary.civilStateTypeId = request.body.civilStateTypeId;
-  beneficiary.employmentTypeId = request.body.employmentTypeId;
-  beneficiary.guardianshipTypeId = request.body.guardianshipTypeId;
-  beneficiary.educationTypeId = request.body.educationTypeId;
-  beneficiary.authorizationTypeId = request.body.authorizationTypeId;
+  beneficiary.familyTypeId = request.body.familyTypeId === "" ? null : request.body.familyTypeId;
+  beneficiary.citizenTypeId = request.body.citizenTypeId === "" ? null : request.body.citizenTypeId;
+  beneficiary.civilStateTypeId = request.body.civilStateTypeId === "" ? null : request.body.civilStateTypeId;
+  beneficiary.employmentTypeId = request.body.employmentTypeId === "" ? null : request.body.employmentTypeId;
+  beneficiary.guardianshipTypeId = request.body.guardianshipTypeId === "" ? null : request.body.guardianshipTypeId;
+  beneficiary.educationTypeId = request.body.educationTypeId === "" ? null : request.body.educationTypeId;
+  beneficiary.authorizationTypeId = request.body.authorizationTypeId === "" ? null : request.body.authorizationTypeId;
   await beneficiary.save();
 
   return response.status(200).json({ id: beneficiary.id });
@@ -164,4 +169,24 @@ export const BeneficiaryByTurn = async (request: Request, response: Response) =>
   });
 
   return response.status(200).json(BeneficiariesResources);
+}
+
+const isIdentifyDuplicated = (cif) => {
+  return Beneficiary.findOne({ where: { cif: cif } });
+}
+
+const licenseGenerator = async (marketId) => {
+
+  const lastBeneficiary = await Beneficiary.createQueryBuilder('beneficiary')
+    .leftJoin('beneficiary.parish', 'parish')
+    .where('parish.marketId = :marketId', { marketId: marketId })
+    .orderBy('beneficiary.license', 'DESC')
+    .getOne();
+
+  if (lastBeneficiary) {
+    console.log('license', lastBeneficiary.license);
+    return lastBeneficiary.license + 1;
+  }
+  console.log('license', 1);
+  return 1;
 }
