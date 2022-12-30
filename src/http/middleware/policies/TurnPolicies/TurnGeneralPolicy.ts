@@ -4,9 +4,7 @@ import { UserProfiles } from '../../../../utils/constants';
 const turnGeneralPolicy = (req: Request, res: Response, next: Function) => {
   console.log('==> TurnGeneralPolicy')
 
-  if (res.locals.profileId === UserProfiles.COMPRAS ||
-    // res.locals.profileId === UserProfiles.CAJA_PEDIDOS ||
-    res.locals.profileId === UserProfiles.GESTOR_PARROQUIA) {
+  if (res.locals.profileId === UserProfiles.COMPRAS) {
     return res.status(403).send({
       status: 'Forbidden',
     });

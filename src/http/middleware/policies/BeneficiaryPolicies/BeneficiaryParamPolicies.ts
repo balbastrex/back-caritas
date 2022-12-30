@@ -10,7 +10,6 @@ const beneficiaryParamPolicies = (req: Request, res: Response, next: Function) =
       where: {
         id: req.params.id,
         parishId: res.locals.parishId,
-        parish: { marketId: res.locals.marketId },
       },
       relations: ["parish"],
     }

@@ -71,13 +71,13 @@ export class BeneficiaryResource {
 
     this.budget = beneficiary.parish?.market?.budget_base + ((beneficiary.adults - 1) * beneficiary.parish?.market?.budget_adult) + (beneficiary.minors * beneficiary.parish?.market?.budget_child);
 
-    this.familyTypeId = isNull(beneficiary.familyTypeId) ? 0 : beneficiary.familyTypeId;
-    this.citizenTypeId = isNull(beneficiary.citizenTypeId) ? 0 : beneficiary.citizenTypeId;
-    this.civilStateTypeId = isNull(beneficiary.civilStateTypeId) ? 0 : beneficiary.civilStateTypeId;
-    this.employmentTypeId = isNull(beneficiary.employmentTypeId) ? 0 : beneficiary.employmentTypeId;
-    this.guardianshipTypeId = isNull(beneficiary.guardianshipTypeId) ? 0 : beneficiary.guardianshipTypeId;
-    this.educationTypeId = isNull(beneficiary.educationTypeId) ? 0 : beneficiary.educationTypeId;
-    this.authorizationTypeId = isNull(beneficiary.authorizationTypeId) ? 0 : beneficiary.authorizationTypeId;
+    this.familyTypeId = beneficiary.familyTypeId;
+    this.citizenTypeId = beneficiary.citizenTypeId;
+    this.civilStateTypeId = beneficiary.civilStateTypeId;
+    this.employmentTypeId = beneficiary.employmentTypeId;
+    this.guardianshipTypeId = beneficiary.guardianshipTypeId;
+    this.educationTypeId = beneficiary.educationTypeId;
+    this.authorizationTypeId = beneficiary.authorizationTypeId;
     this.parishId = beneficiary.parishId;
     this.parishName = beneficiary.parish?.name;
     this.turnId = isNull(beneficiary.turnId) ? 0 : beneficiary.turnId;

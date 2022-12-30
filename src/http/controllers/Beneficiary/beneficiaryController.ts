@@ -49,7 +49,7 @@ export const BeneficiaryShow = async (request: Request, response: Response) => {
 
   const beneficiaryResource = new BeneficiaryResource(beneficiary);
 
-  return response.status(200).json({beneficiaryResource});
+  return response.status(200).json(beneficiaryResource);
 };
 
 export const BeneficiaryStore = async (request: Request, response: Response) => {
@@ -74,17 +74,25 @@ export const BeneficiaryStore = async (request: Request, response: Response) => 
   beneficiary.state = request.body.state;
   beneficiary.zip = request.body.zip;
   beneficiary.free = request.body.free;
-  beneficiary.nationalityId = request.body.nationalityId;
+  beneficiary.nationalityId = request.body.nationalityId === "" ? null : request.body.nationalityId;
+  beneficiary.birth_date = new Date(request.body.birthDate);
+  beneficiary.sice = request.body.sice;
+  beneficiary.gender = request.body.gender;
+  beneficiary.gratuitous = request.body.gratuitous;
+  beneficiary.expires = new Date(request.body.expires);
+  beneficiary.homeless = request.body.homeless;
+  beneficiary.children_under_18 = request.body.childrenUnder18;
+  beneficiary.children_over_18 = request.body.childrenOver18;
 
   beneficiary.parishId = request.body.parishId;
   beneficiary.turnId = request.body.turnId;
-  beneficiary.familyTypeId = request.body.familyTypeId;
-  beneficiary.citizenTypeId = request.body.citizenTypeId;
-  beneficiary.civilStateTypeId = request.body.civilStateTypeId;
-  beneficiary.employmentTypeId = request.body.employmentTypeId;
-  beneficiary.guardianshipTypeId = request.body.guardianshipTypeId;
-  beneficiary.educationTypeId = request.body.educationTypeId;
-  beneficiary.authorizationTypeId = request.body.authorizationTypeId;
+  beneficiary.familyTypeId = request.body.familyTypeId === "" ? null : request.body.familyTypeId;
+  beneficiary.citizenTypeId = request.body.citizenTypeId === "" ? null : request.body.citizenTypeId;
+  beneficiary.civilStateTypeId = request.body.civilStateTypeId === "" ? null : request.body.civilStateTypeId;
+  beneficiary.employmentTypeId = request.body.employmentTypeId === "" ? null : request.body.employmentTypeId;
+  beneficiary.guardianshipTypeId = request.body.guardianshipTypeId === "" ? null : request.body.guardianshipTypeId;
+  beneficiary.educationTypeId = request.body.educationTypeId === "" ? null : request.body.educationTypeId;
+  beneficiary.authorizationTypeId = request.body.authorizationTypeId === "" ? null : request.body.authorizationTypeId;
   await beneficiary.save();
 
   return response.status(200).json({ id: beneficiary.id });
@@ -113,6 +121,14 @@ export const BeneficiaryUpdate = async (request: Request, response: Response) =>
   beneficiary.zip = request.body.zip;
   beneficiary.free = request.body.free;
   beneficiary.nationalityId = request.body.nationalityId;
+  beneficiary.birth_date = new Date(request.body.birthDate);
+  beneficiary.sice = request.body.sice;
+  beneficiary.gender = request.body.gender;
+  beneficiary.gratuitous = request.body.gratuitous;
+  beneficiary.expires = new Date(request.body.expires);
+  beneficiary.homeless = request.body.homeless;
+  beneficiary.children_under_18 = request.body.childrenUnder18;
+  beneficiary.children_over_18 = request.body.childrenOver18;
 
   beneficiary.parishId = request.body.parishId;
   beneficiary.turnId = request.body.turnId;
