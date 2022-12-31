@@ -4,7 +4,7 @@ import { TurnMarketResource } from './TurnMarketResource';
 import { TurnResource } from './TurnResource';
 
 export const TurnIndex = async (request: Request, response: Response) => {
-  const turns = await Turn.find();
+  const turns = await Turn.find({ where: { marketId: response.locals.marketId } });
   const turnsResource = turns.map(turn => new TurnResource(turn));
 
   return response.status(200).json(turnsResource);
