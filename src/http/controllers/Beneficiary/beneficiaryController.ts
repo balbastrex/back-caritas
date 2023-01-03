@@ -163,7 +163,7 @@ export const BeneficiaryByTurn = async (request: Request, response: Response) =>
     return response.status(404).json({ message: 'Turn not found.' });
   }
 
-  const BeneficiariesResources = turn.beneficiaries.map(beneficiary => {
+  const BeneficiariesResources = turn.beneficiaries.filter(beneficiary => beneficiary.expires > new Date()).map(beneficiary => {
     const lastDateOrder = beneficiary.orders.length > 0 ? beneficiary.orders[beneficiary.orders.length - 1].created : new Date();
     return new BeneficiaryTurnResource(beneficiary, lastDateOrder);
   });
