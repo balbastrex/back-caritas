@@ -20,6 +20,26 @@ export const ProductIndex = async (request: Request, response: Response) => {
   return response.status(200).json(productsResponse);
 }
 
+export const ProductOrderIndex = async (request: Request, response: Response) => {
+  const marketId = response.locals.marketId
+  const productsQuery = Product.createQueryBuilder('product');
+
+  if (marketId) {
+    productsQuery.where('product.marketId = :marketId', { marketId });
+  }
+
+  productsQuery.where('product.available = :available', { available: true });
+
+  const products = await productsQuery.orderBy({
+    'product.id': 'ASC'
+  })
+    .getMany();
+
+  const productsResponse: ProductMarketResource[] = products.map(product => new ProductMarketResource(product));
+
+  return response.status(200).json(productsResponse);
+}
+
 export const ProductShow = async (request: Request, response: Response) => {
   const marketId = response.locals.marketId
   const productId = request.params.id
