@@ -40,6 +40,7 @@ export class BeneficiaryResource {
   turnId: number;
   budget: number;
   parishName: string;
+  marketName: string;
 
   constructor(beneficiary: Beneficiary) {
     this.id = beneficiary.id;
@@ -80,6 +81,7 @@ export class BeneficiaryResource {
     this.authorizationTypeId = beneficiary.authorizationTypeId;
     this.parishId = beneficiary.parishId;
     this.parishName = beneficiary.parish?.name;
+    this.marketName = beneficiary.parish?.market?.name;
     this.turnId = isNull(beneficiary.turnId) ? 0 : beneficiary.turnId;
   }
 }
