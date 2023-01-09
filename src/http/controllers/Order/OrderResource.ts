@@ -5,6 +5,14 @@ import { OrderLineResource } from './OrderLineResource';
 export class OrderResource {
   id: number;
   amount: number;
+  parishAmount: string;
+  beneficiaryAmount: string;
+  getParishAmount() {
+    return ((this.gratuitous / 100) * this.amount).toFixed(2);
+  }
+  getBeneficiaryAmount() {
+    return this.amount - parseFloat(this.getParishAmount());
+  }
   gratuitous: number;
   status: string;
   marketId: number;
@@ -16,6 +24,7 @@ export class OrderResource {
   beneficiaryFamilyUnit: number;
   userName: string;
   orderLines: OrderLineResource[];
+  budget: number;
   createdAt: number;
 
   constructor(order: Order) {
@@ -33,5 +42,8 @@ export class OrderResource {
     this.userName = order.user.name;
     this.createdAt = new Date(order.created).getTime();
     this.orderLines = order.orderLines.sort(orderLineCompare).map(orderLine => new OrderLineResource(orderLine));
+    this.budget = order.market?.budget_base + ((order.beneficiary?.adults - 1) * order.market?.budget_adult) + (order.beneficiary?.minors * order?.market?.budget_child);
+    this.parishAmount = this.getParishAmount();
+    this.beneficiaryAmount = this.getBeneficiaryAmount().toFixed(2);
   }
 }
