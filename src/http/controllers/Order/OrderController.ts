@@ -30,6 +30,23 @@ export const OrderHistoryIndex = async (request: Request, response: Response) =>
   return response.status(200).json(ordersResponse);
 }
 
+export const BeneficiaryOrderHistoryIndex = async (request: Request, response: Response) => {
+  const beneficiaryId = request.params.beneficiaryId;
+
+  const orders = await Order.find({
+    where: {
+      ...response.locals.findQuery,
+      beneficiaryId
+    },
+    order: { created: 'DESC', id: 'DESC' },
+    relations: ['beneficiary', 'beneficiary.parish', 'market', 'user', 'orderLines'],
+  });
+
+  const ordersResponse: OrderResource[] = orders.map(order => new OrderResource(order));
+
+  return response.status(200).json(ordersResponse);
+}
+
 export const OrderShow = async (request: Request, response: Response) => {
   const order = await Order.findOne(request.params.id, {
     relations: ['beneficiary', 'beneficiary.parish', 'market', 'user', 'orderLines'],

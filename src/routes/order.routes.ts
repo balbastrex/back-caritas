@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import {
+  BeneficiaryOrderHistoryIndex,
   OrderHistoryIndex,
   OrderIndex,
   OrderShow,
@@ -16,5 +17,6 @@ router.get('/api/v1/order/:id', OrderShow);
 router.put('/api/v1/order/:id', OrderUpdate);
 router.put('/api/v1/order/:orderId/status/:status', OrderUpdateStatus);
 router.get('/api/v1/order-history', OrderHistoryIndex);
+router.get('/api/v1/order-history/:beneficiaryId', BeneficiaryOrderHistoryIndex);
 
 export default router;
