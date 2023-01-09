@@ -1,4 +1,5 @@
 import { Order } from '../../../entities/Order';
+import { orderLineCompare } from '../../../utils/sorting';
 import { OrderLineResource } from './OrderLineResource';
 
 export class OrderResource {
@@ -31,6 +32,6 @@ export class OrderResource {
     this.beneficiaryFamilyUnit = order.beneficiary?.family_unit;
     this.userName = order.user.name;
     this.createdAt = new Date(order.created).getTime();
-    this.orderLines = order.orderLines.map(orderLine => new OrderLineResource(orderLine));
+    this.orderLines = order.orderLines.sort(orderLineCompare).map(orderLine => new OrderLineResource(orderLine));
   }
 }

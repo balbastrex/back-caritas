@@ -22,7 +22,6 @@ export const OrderHistoryIndex = async (request: Request, response: Response) =>
     where: {...response.locals.findQuery},
     order: { created: 'DESC', id: 'DESC' },
     relations: ['beneficiary', 'beneficiary.parish', 'market', 'user', 'orderLines'],
-
   });
 
   const ordersResponse: OrderResource[] = orders.map(order => new OrderResource(order));
