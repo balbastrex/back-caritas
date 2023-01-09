@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Beneficiary } from '../../../entities/Beneficiary';
 import { Order } from '../../../entities/Order';
 import { OrderLine } from '../../../entities/OrderLine';
 import { OrderStatuses } from '../../../utils/constants';
@@ -22,7 +23,6 @@ export const OrderHistoryIndex = async (request: Request, response: Response) =>
     where: {...response.locals.findQuery},
     order: { created: 'DESC', id: 'DESC' },
     relations: ['beneficiary', 'beneficiary.parish', 'market', 'user', 'orderLines'],
-
   });
 
   const ordersResponse: OrderResource[] = orders.map(order => new OrderResource(order));
@@ -49,6 +49,8 @@ export const OrderStore = async (request: Request, response: Response) => {
     return total + orderLine.price * orderLine.units;
   }, 0);
 
+  const beneficiary = await Beneficiary.findOne(request.body.beneficiaryId);
+
   const order = new Order();
 
   order.beneficiaryId = request.body.beneficiaryId;
@@ -57,7 +59,7 @@ export const OrderStore = async (request: Request, response: Response) => {
   order.parishId = response.locals.parishId;
 
   order.amount = amount;
-  order.gratuitous = 0;
+  order.gratuitous = beneficiary.gratuitous;
   order.status = OrderStatuses.ABIERTO;
 
   order.created = new Date();
@@ -88,6 +90,8 @@ export const OrderUpdate = async (request: Request, response: Response) => {
     return total + orderLine.price * orderLine.units;
   }, 0);
 
+  const beneficiary = await Beneficiary.findOne(request.body.beneficiaryId);
+
   const order = await Order.findOne(request.params.id);
 
   order.beneficiaryId = request.body.beneficiaryId;
@@ -96,7 +100,7 @@ export const OrderUpdate = async (request: Request, response: Response) => {
   order.parishId = response.locals.parishId;
 
   order.amount = amount;
-  order.gratuitous = 0;
+  order.gratuitous = beneficiary.gratuitous;
   order.status = OrderStatuses.ABIERTO;
 
   order.created = new Date();
