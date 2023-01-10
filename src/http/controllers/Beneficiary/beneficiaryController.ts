@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { createQueryBuilder } from 'typeorm';
 import { Beneficiary } from '../../../entities/Beneficiary';
 import { Turn } from '../../../entities/Turn';
 import { BeneficiaryIdNameResource } from './BeneficiaryIdNameResource';
@@ -117,7 +116,7 @@ export const BeneficiaryUpdate = async (request: Request, response: Response) =>
   beneficiary.cif = request.body.cif;
   beneficiary.adults = request.body.adults;
   beneficiary.minors = request.body.minors;
-  beneficiary.family_unit = request.body.family_unit;
+  beneficiary.family_unit = request.body.adults + request.body.minors;
   beneficiary.phone = request.body.phone;
   beneficiary.email = request.body.email;
   beneficiary.address = request.body.address;
