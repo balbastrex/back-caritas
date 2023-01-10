@@ -24,11 +24,11 @@ export const ProductOrderIndex = async (request: Request, response: Response) =>
   const marketId = response.locals.marketId
   const productsQuery = Product.createQueryBuilder('product');
 
-  if (marketId) {
-    productsQuery.where('product.marketId = :marketId', { marketId });
-  }
-
   productsQuery.where('product.available = :available', { available: true });
+
+  if (marketId) {
+    productsQuery.andWhere('product.marketId = :marketId', { marketId });
+  }
 
   const products = await productsQuery.orderBy({
     'product.id': 'ASC'

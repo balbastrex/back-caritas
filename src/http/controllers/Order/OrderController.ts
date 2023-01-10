@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { Beneficiary } from '../../../entities/Beneficiary';
 import { Order } from '../../../entities/Order';
 import { OrderLine } from '../../../entities/OrderLine';
+import { Product } from '../../../entities/Product';
 import { OrderStatuses } from '../../../utils/constants';
 import { OrderResource } from './OrderResource';
 
@@ -97,7 +98,18 @@ export const OrderStore = async (request: Request, response: Response) => {
     orderLine.free = line.free;
 
     orderLine.save();
-  })
+  });
+
+  for (const line of request.body.orderLines) {
+    const product = await Product.findOne(line.productId);
+
+    if (!product) {
+      continue;
+    }
+
+    product.stock = product.stock - line.units;
+    await product.save();
+  }
 
   return response.status(201).json({ message: 'Order created successfully.' });
 }
@@ -141,7 +153,18 @@ export const OrderUpdate = async (request: Request, response: Response) => {
     orderLine.free = line.free;
 
     orderLine.save();
-  })
+  });
+
+  for (const line of request.body.orderLines) {
+    const product = await Product.findOne(line.productId);
+
+    if (!product) {
+      continue;
+    }
+
+    product.stock = product.stock - line.units;
+    await product.save();
+  }
 
   return response.status(201).json({ message: 'Order created successfully.' });
 }
