@@ -39,7 +39,7 @@ export class OrderResource {
     this.beneficiaryName = order.beneficiary?.firstname + ' ' + order.beneficiary?.lastname1 + ' ' + order.beneficiary?.lastname2;
     this.parishName = order.beneficiary?.parish.name;
     this.beneficiaryFamilyUnit = order.beneficiary?.family_unit;
-    this.userName = order.user.name;
+    this.userName = order.user?.name ? order.user?.name : 'no name';
     this.createdAt = new Date(order.created).getTime();
     this.orderLines = order.orderLines.sort(orderLineCompare).map(orderLine => new OrderLineResource(orderLine));
     this.budget = order.market?.budget_base + ((order.beneficiary?.adults - 1) * order.market?.budget_adult) + (order.beneficiary?.minors * order?.market?.budget_child);
