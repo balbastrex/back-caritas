@@ -186,3 +186,31 @@ export const OrderUpdateStatus = async (request: Request, response: Response) =>
 
   return response.status(200).json({ message: 'Order status updated successfully.' });
 }
+
+export const OrderDelete = async (request: Request, response: Response) => {
+  const order = await Order.findOne(request.params.id);
+
+  if (!order || order.status !== OrderStatuses.ABIERTO) {
+    return response.status(404).json({
+      message: 'Order not found or is not open.'
+    });
+  }
+
+  const orderLines = await OrderLine.find({ orderId: order.id });
+
+  for (const line of orderLines) {
+    const product = await Product.findOne(line.productId);
+
+    if (!product) {
+      continue;
+    }
+
+    product.stock = product.stock + line.units;
+    await product.save();
+  }
+
+  await OrderLine.remove(orderLines);
+  await Order.remove(order);
+
+  return response.status(201).json({ message: 'Order removed successfully.', orderId: order.id });
+}

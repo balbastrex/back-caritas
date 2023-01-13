@@ -20,11 +20,23 @@ const orderParamPolicies = async (req: Request, res: Response, next: Function) =
       //  CHECK ALLOWED PROFILES
       await writeOrderParamsPolicy(req, res, next);
     //  SET ALLOWED QUERY PARAMETERS
+      break;
+    case 'DELETE':
+      //  CHECK ALLOWED PROFILES
+      await deleteOrderParamsPolicy(req, res, next);
+    //  SET ALLOWED QUERY PARAMETERS
+      break;
   }
 };
 
 const readOrderParamsPolicy = (req: Request, res: Response, next: Function) => {
   console.log('==> Read|Order|ParamsPolicy')
+
+  next();
+}
+
+const deleteOrderParamsPolicy = (req: Request, res: Response, next: Function) => {
+  console.log('==> Delete|Order|ParamsPolicy')
 
   next();
 }
