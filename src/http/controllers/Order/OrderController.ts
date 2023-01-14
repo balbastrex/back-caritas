@@ -189,6 +189,7 @@ export const OrderUpdateStatus = async (request: Request, response: Response) =>
 
 export const OrderDelete = async (request: Request, response: Response) => {
   const order = await Order.findOne(request.params.id);
+  const orderId = order.id;
 
   if (!order || order.status !== OrderStatuses.ABIERTO) {
     return response.status(404).json({
@@ -212,5 +213,5 @@ export const OrderDelete = async (request: Request, response: Response) => {
   await OrderLine.remove(orderLines);
   await Order.remove(order);
 
-  return response.status(201).json({ message: 'Order removed successfully.', orderId: order.id });
+  return response.status(201).json({ message: 'Order removed successfully.', orderId });
 }
