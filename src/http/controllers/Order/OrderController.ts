@@ -74,7 +74,7 @@ export const OrderStore = async (request: Request, response: Response) => {
   order.beneficiaryId = request.body.beneficiaryId;
   order.userId = response.locals.userId;
   order.marketId = response.locals.marketId;
-  order.parishId = response.locals.parishId;
+  order.parishId = beneficiary.parishId;
 
   order.amount = amount;
   order.gratuitous = beneficiary.gratuitous;
@@ -126,7 +126,7 @@ export const OrderUpdate = async (request: Request, response: Response) => {
   order.beneficiaryId = request.body.beneficiaryId;
   order.userId = response.locals.userId;
   order.marketId = response.locals.marketId;
-  order.parishId = response.locals.parishId;
+  order.parishId = beneficiary.parishId;
 
   order.amount = amount;
   order.gratuitous = beneficiary.gratuitous;
