@@ -11,6 +11,8 @@ import beneficiarySelectorPolicy from './http/middleware/policies/BeneficiaryPol
 import beneficiaryTurnPolicy from './http/middleware/policies/BeneficiaryPolicies/BeneficiaryTurnPolicy';
 import marketGeneralPolicy from './http/middleware/policies/MarketPolicies/MarketGeneralPolicy';
 import marketParamPolicies from './http/middleware/policies/MarketPolicies/MarketParamPolicies';
+import noteGeneralPolicy from './http/middleware/policies/NoteGeneralPolicy/NoteGeneralPolicy';
+import noteParamPolicies from './http/middleware/policies/NoteGeneralPolicy/NoteParamPolicies';
 import orderGeneralPolicy from './http/middleware/policies/OrderPolicies/OrderGeneralPolicy';
 import orderHistoryGeneralPolicy from './http/middleware/policies/OrderPolicies/OrderHistoryGeneralPolicy';
 import orderParamPolicies from './http/middleware/policies/OrderPolicies/OrderParamPolicies';
@@ -47,6 +49,7 @@ import serviceRoutes from './routes/service.routes';
 import orderRoutes from './routes/order.routes';
 import receiptRoutes from './routes/receipt.routes';
 import providerRoutes from './routes/provider.routes';
+import noteRoutes from './routes/note.routes';
 
 dotenv.config();
 
@@ -102,6 +105,9 @@ app.use('/api/v1/provider/:id', providerParamPolicies);
 app.use('/api/v1/user', userGeneralPolicy);
 app.use('/api/v1/user/:id', userParamPolicies);
 
+app.use('/api/v1/note', noteGeneralPolicy);
+app.use('/api/v1/note/:id', noteParamPolicies);
+
 app.use(userRoutes);
 app.use(marketRoutes);
 app.use(parishRoutes);
@@ -121,6 +127,7 @@ app.use(serviceRoutes);
 app.use(orderRoutes);
 app.use(receiptRoutes);
 app.use(providerRoutes);
+app.use(noteRoutes);
 
 app.listen(PORT, () => {
   console.log(`server started at http://localhost:${PORT}`);

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Beneficiary } from '../../../entities/Beneficiary';
+import { Note } from '../../../entities/Note';
 import { Turn } from '../../../entities/Turn';
 import { BeneficiaryIdNameResource } from './BeneficiaryIdNameResource';
 import { BeneficiaryResource } from './BeneficiaryResource';
@@ -29,7 +30,7 @@ export const BeneficiaryIndex = async (request: Request, response: Response) => 
 export const BeneficiaryIndexIdName = async (request: Request, response: Response) => {
   const beneficiaries = await Beneficiary.find({
     ...response.locals.findQuery,
-    relations: ['orders', 'parish', 'parish.market']
+    relations: ['orders', 'parish', 'parish.market', 'notes']
   });
 
   const beneficiariesResources = beneficiaries.map(beneficiary => {
@@ -168,6 +169,18 @@ export const BeneficiaryByTurn = async (request: Request, response: Response) =>
   });
 
   return response.status(200).json(BeneficiariesResources);
+}
+
+export const IndexBeneficiaryNotes = async (request: Request, response: Response) => {
+  const beneficiary: Beneficiary = await Beneficiary.findOne(response.locals.findQuery);
+
+  if (!beneficiary) {
+    return response.status(404).json({ message: 'Beneficiary not found.' });
+  }
+
+  const notes = await Note.find({ where: { beneficiaryId: beneficiary.id } });
+
+  return response.status(200).json({ notes, beneficiaryName: beneficiary.firstname + ' ' + beneficiary.lastname1 });
 }
 
 const isIdentifyDuplicated = (cif) => {

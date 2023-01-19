@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Note } from './Note';
 import { Order } from './Order';
 import { Parish } from './Parish';
 import { Turn } from './Turn';
@@ -135,6 +136,13 @@ export class Beneficiary extends BaseEntity {
       onUpdate: 'NO ACTION'
     })
   orders: Order[];
+
+  @OneToMany(() => Note, note => note.beneficiary,
+    {
+      onDelete: 'NO ACTION',
+      onUpdate: 'NO ACTION'
+    })
+  notes: Note[];
 
   @CreateDateColumn()
   created
