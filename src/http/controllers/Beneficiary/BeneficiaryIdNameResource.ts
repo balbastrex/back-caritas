@@ -8,6 +8,7 @@ export class BeneficiaryIdNameResource {
   budget: number;
   lastDateOrder: Date;
   expires: Date;
+  notes: Array<string>;
 
   constructor(beneficiary: Beneficiary, lastDateOrder) {
     this.id = beneficiary.id;
@@ -17,5 +18,6 @@ export class BeneficiaryIdNameResource {
     this.budget = beneficiary.parish?.market?.budget_base + ((beneficiary.adults - 1) * beneficiary.parish?.market?.budget_adult) + (beneficiary.minors * beneficiary.parish?.market?.budget_child);
     this.lastDateOrder = lastDateOrder;
     this.expires = beneficiary.expires;
+    this.notes = beneficiary.notes.map(note => note.description);
   }
 }
