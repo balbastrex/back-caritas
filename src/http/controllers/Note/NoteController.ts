@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { Note } from '../../../entities/Note';
-import { Turn } from '../../../entities/Turn';
 import { NoteResource } from './NoteResource';
 
 export const NoteShow = async (request: Request, response: Response) => {
@@ -13,6 +12,19 @@ export const NoteShow = async (request: Request, response: Response) => {
   const noteResource = new NoteResource(note);
 
   return response.status(200).json(noteResource);
+};
+
+export const NoteDelete = async (request: Request, response: Response) => {
+  const note = await Note.findOne(response.locals.findQuery);
+  const noteId = note.id;
+
+  if (!note) {
+    return response.status(404).json({ message: 'Note not found.' });
+  }
+
+  await note.remove();
+
+  return response.status(200).json({ id: noteId });
 };
 
 export const NoteUpdate = async (request: Request, response: Response) => {
