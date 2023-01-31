@@ -15,7 +15,7 @@ const Login = async (request: Request, response: Response) => {
 
   if (email && password) {
     const userRepository = getRepository(User, "default");
-    const user = await userRepository.findOne({ where: { email: email } });
+    const user = await userRepository.findOne({ where: { email: email, isActive: true } });
 
     if (!user)
     {
