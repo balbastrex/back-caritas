@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Beneficiary } from '../../../entities/Beneficiary';
 import { Note } from '../../../entities/Note';
+import { Parish } from '../../../entities/Parish';
 import { Turn } from '../../../entities/Turn';
 import { BeneficiaryIdNameResource } from './BeneficiaryIdNameResource';
 import { BeneficiaryResource } from './BeneficiaryResource';
@@ -110,6 +111,8 @@ export const BeneficiaryUpdate = async (request: Request, response: Response) =>
     return response.status(404).json({ message: 'Beneficiary not found.' });
   }
 
+  const parish = await Parish.findOne(request.body.parishId);
+
   beneficiary.firstname = request.body.name;
   beneficiary.lastname1 = request.body.lastname1;
   beneficiary.lastname2 = request.body.lastname2;
@@ -135,7 +138,7 @@ export const BeneficiaryUpdate = async (request: Request, response: Response) =>
   beneficiary.children_under_18 = request.body.childrenUnder18;
   beneficiary.children_over_18 = request.body.childrenOver18;
 
-  beneficiary.parishId = request.body.parishId;
+  beneficiary.parish = parish;
   beneficiary.turnId = request.body.turnId;
   beneficiary.familyTypeId = request.body.familyTypeId === "" ? null : request.body.familyTypeId;
   beneficiary.citizenTypeId = request.body.citizenTypeId === "" ? null : request.body.citizenTypeId;
