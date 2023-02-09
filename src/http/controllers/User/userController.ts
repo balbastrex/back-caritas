@@ -10,7 +10,9 @@ import { UserResource } from './UserResource';
 export const UserIndex = async (request: Request, response: Response) => {
   const users: User[] = await User.find({ ...response.locals.findQuery });
 
-  const usersResource = users.map(user => new UserResource(user));
+  const usersResource = users.filter(user => {
+    return !((response.locals.profileId === 2) && (user.profileId === 1));
+  }).map(user => new UserResource(user));
 
   return response.status(200).json(usersResource);
 }
