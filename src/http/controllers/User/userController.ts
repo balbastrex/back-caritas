@@ -6,7 +6,6 @@ import { User } from '../../../entities/User';
 import { ParishMarketSelectorResource } from './ParishMarketSelectorResource';
 import { RoleResource } from './RoleResource';
 import { UserResource } from './UserResource';
-// import * as bcrypt from 'bcrypt';
 
 export const UserIndex = async (request: Request, response: Response) => {
   const users: User[] = await User.find({ ...response.locals.findQuery });
@@ -27,7 +26,9 @@ export const UserShow = async (request: Request, response: Response) => {
 export const UserRolesIndex = async (request: Request, response: Response) => {
   const roles: Role[] = await Role.find();
 
-  const roleResources = roles.map(role => new RoleResource(role));
+  const roleResources = roles.filter(role => {
+    return !((response.locals.profileId === 2) && (role.id === 1));
+  }).map(role => new RoleResource(role));
 
   return response.status(200).json(roleResources);
 }
@@ -68,6 +69,7 @@ export const UserStore = async (request: Request, response: Response) => {
   const user = new User();
   user.marketId = marketId;
   user.password = request.body.password;
+  user.created_at = new Date();
 
   await fillAndSaveUser(user, request);
 
@@ -108,5 +110,6 @@ async function fillAndSaveUser(user: User, request: Request) {
   user.parishId = request.body.parishId;
   user.isActive = request.body.isActive;
   user.profileId = request.body.profileId;
+  user.updated_at = new Date();
   await user.save();
 }
