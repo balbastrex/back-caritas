@@ -72,7 +72,7 @@ export const BeneficiaryStore = async (request: Request, response: Response) => 
   beneficiary.cif = request.body.cif;
   beneficiary.adults = request.body.adults;
   beneficiary.minors = request.body.minors;
-  beneficiary.family_unit = request.body.adults + request.body.minors;
+  beneficiary.family_unit = parseInt(request.body.adults) + parseInt(request.body.minors);
   beneficiary.phone = request.body.phone;
   beneficiary.email = request.body.email;
   beneficiary.address = request.body.address;
@@ -120,7 +120,7 @@ export const BeneficiaryUpdate = async (request: Request, response: Response) =>
   beneficiary.cif = request.body.cif;
   beneficiary.adults = request.body.adults;
   beneficiary.minors = request.body.minors;
-  beneficiary.family_unit = request.body.adults + request.body.minors;
+  beneficiary.family_unit = parseInt(request.body.adults) + parseInt(request.body.minors);
   beneficiary.phone = request.body.phone;
   beneficiary.email = request.body.email;
   beneficiary.address = request.body.address;
