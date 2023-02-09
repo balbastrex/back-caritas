@@ -167,7 +167,22 @@ export const BeneficiaryByTurn = async (request: Request, response: Response) =>
   }
 
   const BeneficiariesResources = turn.beneficiaries.filter(beneficiary => beneficiary.expires > new Date()).map(beneficiary => {
-    const lastDateOrder = beneficiary.orders.length > 0 ? beneficiary.orders[beneficiary.orders.length - 1].created : new Date();
+    let lastDateOrder = undefined;
+
+    if (beneficiary.orders.length > 0) {
+      const orders = beneficiary.orders.sort((a, b) => {
+        if (a.created > b.created) {
+          return 1;
+        }
+        if (a.created < b.created) {
+          return -1;
+        }
+        return 0;
+      });
+
+      lastDateOrder = orders[orders.length - 1].created
+    }
+
     return new BeneficiaryTurnResource(beneficiary, lastDateOrder);
   });
 
