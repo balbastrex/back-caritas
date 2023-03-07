@@ -1,7 +1,10 @@
 import { Request, Response } from 'express';
+import { Order } from '../../../entities/Order';
 import { Product } from '../../../entities/Product';
 import { Receipt } from '../../../entities/Receipt';
 import { ReceiptLine } from '../../../entities/ReceiptLine';
+import { OrderResource } from '../Order/OrderResource';
+import { ParishOrdersReportResource } from '../Order/ParishOrdersReportResource';
 import { ReceiptResource } from './ReceiptResource';
 
 export const ReceiptIndex = async (request: Request, response: Response) => {
@@ -113,6 +116,61 @@ export const ReceiptUpdate = async (request: Request, response: Response) => {
   }
 
   return response.status(201).json({ message: 'Receipt updated successfully.' });
+}
+
+export const ParishOrdersReport = async (request: Request, response: Response) => {
+  const query = Order.createQueryBuilder('orders')
+    .leftJoinAndSelect('orders.beneficiary', 'beneficiary')
+    .leftJoinAndSelect('beneficiary.parish', 'parish')
+    .leftJoinAndSelect('orders.market', 'market')
+    .where({ ...response.locals.findQuery })
+
+  const startDate =  request.body.startDate;
+  const start = startDate.substring(0, startDate.length - 14);
+  query.andWhere('orders.created >= :start', { start })
+
+  const endDate = request.body.endDate;
+  const end = endDate.substring(0, endDate.length - 14);
+  query.andWhere('orders.created <= :end', { end });
+
+  const orders: Array<any> = await query.orderBy({
+    'orders.id': 'ASC'
+  })
+    .getMany();
+
+  const mySet = new Set();
+  const distinct = orders.filter((order) => {
+    const duplicate = mySet.has(order.beneficiary.parish.id);
+    mySet.add(order.beneficiary.parish.id);
+    return !duplicate;
+  })
+
+  const result = distinct.map((dis) => {
+    const ordersByParish = orders.filter((order) => order.beneficiary.parish.id === dis.beneficiary.parish.id);
+    const summaryParishAmount = ordersByParish.reduce((parishAmount, order) => {
+      return parishAmount + getParishAmount(order.gratuitous, order.amount);
+    }, 0);
+    const summaryBeneficiaryAmount = ordersByParish.reduce((beneficiaryAmount, order) => {
+      return beneficiaryAmount + getBeneficiaryAmount(order.gratuitous, order.amount);
+    }, 0);
+
+    return {
+      parishId: dis.beneficiary.parish.id,
+      parishName: dis.beneficiary.parish.name,
+      totalParishAmount: summaryParishAmount,
+      totalBeneficiaryAmount: summaryBeneficiaryAmount,
+      orders: dis.orders = ordersByParish.map(order => new ParishOrdersReportResource(order))
+    }
+  });
+
+  return response.status(200).json(result);
+}
+
+const getParishAmount = (gratuitous: number, amount: number) => {
+  return ((gratuitous / 100) * amount);
+}
+const getBeneficiaryAmount = (gratuitous: number, amount: number) => {
+  return amount - getParishAmount(gratuitous, amount)
 }
 
 const calculateWeightedAverageCost = (product: Product, receiptLine: ReceiptLine) => {
