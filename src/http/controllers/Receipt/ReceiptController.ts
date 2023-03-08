@@ -3,7 +3,6 @@ import { Order } from '../../../entities/Order';
 import { Product } from '../../../entities/Product';
 import { Receipt } from '../../../entities/Receipt';
 import { ReceiptLine } from '../../../entities/ReceiptLine';
-import { OrderResource } from '../Order/OrderResource';
 import { ParishOrdersReportResource } from '../Order/ParishOrdersReportResource';
 import { ReceiptResource } from './ReceiptResource';
 
@@ -124,6 +123,7 @@ export const ParishOrdersReport = async (request: Request, response: Response) =
     .leftJoinAndSelect('beneficiary.parish', 'parish')
     .leftJoinAndSelect('orders.market', 'market')
     .where({ ...response.locals.findQuery })
+    .andWhere('orders.gratuitous > 0')
 
   const startDate =  request.body.startDate;
   const start = startDate.substring(0, startDate.length - 14);
