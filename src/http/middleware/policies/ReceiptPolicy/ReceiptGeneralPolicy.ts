@@ -4,7 +4,7 @@ import { UserProfiles } from '../../../../utils/constants';
 const receiptGeneralPolicy = (req: Request, res: Response, next: Function) => {
   console.log('==> ReceiptGeneralPolicy')
 
-  if (res.locals.profileId === UserProfiles.CAJA_PEDIDOS || res.locals.profileId === UserProfiles.GESTOR_PARROQUIA) {
+  if (res.locals.profileId === UserProfiles.CAJA_PEDIDOS) {
     return res.status(403).send({
       status: 'Forbidden',
     });
@@ -12,8 +12,23 @@ const receiptGeneralPolicy = (req: Request, res: Response, next: Function) => {
 
   res.locals.findQuery = {};
   if (res.locals.profileId === UserProfiles.COMPRAS || res.locals.profileId === UserProfiles.DIRECTOR_ECONOMATO) {
+    const parishId =  req.body.parishId;
+    if (parishId === 0) {
+      res.locals.findQuery = {
+        marketId: res.locals.marketId,
+      };
+    } else {
+      res.locals.findQuery = {
+        marketId: res.locals.marketId,
+        parishId: parishId,
+      };
+    }
+  }
+
+  if (res.locals.profileId === UserProfiles.GESTOR_PARROQUIA) {
     res.locals.findQuery = {
       marketId: res.locals.marketId,
+      parishId: res.locals.parishId,
     };
   }
 
