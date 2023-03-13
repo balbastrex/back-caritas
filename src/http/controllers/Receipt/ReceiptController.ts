@@ -126,12 +126,14 @@ export const ParishOrdersReport = async (request: Request, response: Response) =
     .andWhere('orders.gratuitous > 0')
 
   const startDate =  request.body.startDate;
-  const start = startDate.substring(0, startDate.length - 14);
-  query.andWhere('orders.created >= :start', { start })
+  if (startDate) {
+    query.andWhere('orders.created >= :start', { start: startDate })
+  }
 
   const endDate = request.body.endDate;
-  const end = endDate.substring(0, endDate.length - 14);
-  query.andWhere('orders.created <= :end', { end });
+  if (endDate) {
+    query.andWhere('orders.created <= :end', { end: endDate });
+  }
 
   const orders: Array<any> = await query.orderBy({
     'orders.id': 'ASC'
