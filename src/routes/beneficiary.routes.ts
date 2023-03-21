@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import {
+  BeneficiariesNeedsPrint,
   BeneficiaryByTurn,
   BeneficiaryIndex,
   BeneficiaryIndexIdName,
   BeneficiaryShow,
   BeneficiaryStore,
   BeneficiaryUpdate,
-  IndexBeneficiaryNotes,
+  IndexBeneficiaryNotes, setBeneficiariesPrinted,
 } from '../http/controllers/Beneficiary/beneficiaryController';
 
 const router = Router();
@@ -18,5 +19,7 @@ router.get('/api/v1/beneficiary-turn/:id', BeneficiaryByTurn);
 router.get('/api/v1/beneficiary/:id', BeneficiaryShow);
 router.put('/api/v1/beneficiary/:id', BeneficiaryUpdate);
 router.get('/api/v1/beneficiary/:id/notes', IndexBeneficiaryNotes);
+router.get('/api/v1/beneficiary-license', BeneficiariesNeedsPrint);
+router.put('/api/v1/beneficiaries-printed', setBeneficiariesPrinted);
 
 export default router;

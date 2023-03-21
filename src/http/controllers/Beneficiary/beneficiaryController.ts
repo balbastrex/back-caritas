@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
+import moment from 'moment/moment';
 import { Beneficiary } from '../../../entities/Beneficiary';
 import { Note } from '../../../entities/Note';
 import { Parish } from '../../../entities/Parish';
 import { Turn } from '../../../entities/Turn';
 import { BeneficiaryIdNameResource } from './BeneficiaryIdNameResource';
+import { BeneficiaryLicenseResource } from './BeneficiaryLicenseResource';
 import { BeneficiaryResource } from './BeneficiaryResource';
 import { BeneficiaryTurnResource } from './BeneficiaryTurnResource';
 
@@ -44,7 +46,7 @@ export const BeneficiaryIndexIdName = async (request: Request, response: Respons
 
 export const BeneficiaryShow = async (request: Request, response: Response) => {
   const beneficiary: Beneficiary = await Beneficiary.findOne(response.locals.findQuery);
-
+  console.log('show')
   if (!beneficiary) {
     return response.status(404).json({ message: 'Beneficiary not found.' });
   }
@@ -89,6 +91,7 @@ export const BeneficiaryStore = async (request: Request, response: Response) => 
   beneficiary.homeless = request.body.homeless;
   beneficiary.children_under_18 = request.body.childrenUnder18;
   beneficiary.children_over_18 = request.body.childrenOver18;
+  beneficiary.needs_print = true;
 
   beneficiary.parishId = request.body.parishId;
   beneficiary.turnId = request.body.turnId;
@@ -133,10 +136,16 @@ export const BeneficiaryUpdate = async (request: Request, response: Response) =>
   beneficiary.sice = request.body.sice;
   beneficiary.gender = request.body.gender;
   beneficiary.gratuitous = request.body.gratuitous;
-  beneficiary.expires = new Date(request.body.expires);
   beneficiary.homeless = request.body.homeless;
   beneficiary.children_under_18 = request.body.childrenUnder18;
   beneficiary.children_over_18 = request.body.childrenOver18;
+
+  const expireDate = moment(new Date(request.body.expires)).format('yyyy-MM-DD')
+  const beneficiaryExpires = moment(beneficiary.expires).format('yyyy-MM-DD')
+  if (expireDate !== beneficiaryExpires) {
+    beneficiary.needs_print = true;
+  }
+
 
   beneficiary.parish = parish;
   beneficiary.turnId = request.body.turnId;
@@ -203,6 +212,23 @@ export const IndexBeneficiaryNotes = async (request: Request, response: Response
 
 const isIdentifyDuplicated = (cif) => {
   return Beneficiary.findOne({ where: { cif: cif } });
+}
+
+export const BeneficiariesNeedsPrint = async (request: Request, response: Response) => {
+  const beneficiaries = await Beneficiary.find({ ...response.locals.findQuery });
+  const beneficiariesLicenseResources = beneficiaries.map(beneficiary => new BeneficiaryLicenseResource(beneficiary));
+
+  return response.status(200).json(beneficiariesLicenseResources);
+}
+
+export const setBeneficiariesPrinted = async (request: Request, response: Response) => {
+  const beneficiaries = await Beneficiary.find({ ...response.locals.findQuery });
+  for (const beneficiary of beneficiaries) {
+    beneficiary.needs_print = false;
+    await beneficiary.save();
+  }
+
+  return response.status(200).json({ message: 'Beneficiaries updated.' });
 }
 
 const licenseGenerator = async (marketId) => {

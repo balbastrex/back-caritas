@@ -5,7 +5,9 @@ import express, { Express } from 'express';
 import helmet from 'helmet';
 import { createConnections } from 'typeorm';
 import Login from './http/controllers/Auth/login';
+import beneficiariesPrintedPolicy from './http/middleware/policies/BeneficiaryPolicies/BeneficiariesPrintedPolicy';
 import beneficiaryGeneralPolicy from './http/middleware/policies/BeneficiaryPolicies/BeneficiaryGeneralPolicy';
+import beneficiaryLicensePolicy from './http/middleware/policies/BeneficiaryPolicies/BeneficiaryLicensePolicy';
 import beneficiaryParamPolicies from './http/middleware/policies/BeneficiaryPolicies/BeneficiaryParamPolicies';
 import beneficiarySelectorPolicy from './http/middleware/policies/BeneficiaryPolicies/BeneficiarySelectorPolicy';
 import beneficiaryTurnPolicy from './http/middleware/policies/BeneficiaryPolicies/BeneficiaryTurnPolicy';
@@ -82,6 +84,8 @@ app.use('/api/v1/parish/:id', parishParamPolicies);
 app.use('/api/v1/beneficiary', beneficiaryGeneralPolicy);
 app.use('/api/v1/beneficiary/:id', beneficiaryParamPolicies);
 app.use('/api/v1/beneficiary-selector', beneficiarySelectorPolicy);
+app.use('/api/v1/beneficiary-license', beneficiaryLicensePolicy);
+app.use('/api/v1/beneficiaries-printed', beneficiariesPrintedPolicy);
 app.use('/api/v1/beneficiary-turn/:id', beneficiaryTurnPolicy);
 
 app.use('/api/v1/product', productGeneralPolicy);

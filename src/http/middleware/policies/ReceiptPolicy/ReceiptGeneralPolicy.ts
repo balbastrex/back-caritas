@@ -12,7 +12,7 @@ const receiptGeneralPolicy = (req: Request, res: Response, next: Function) => {
 
   res.locals.findQuery = {};
   if (res.locals.profileId === UserProfiles.COMPRAS || res.locals.profileId === UserProfiles.DIRECTOR_ECONOMATO) {
-    const parishId =  req.body.parishId;
+    const parishId =  req.body.parishId || 0;
     if (parishId === 0) {
       res.locals.findQuery = {
         marketId: res.locals.marketId,
