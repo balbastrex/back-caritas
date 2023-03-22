@@ -1,10 +1,12 @@
 import { Request, Response } from 'express';
+import { Brackets } from 'typeorm';
 import { Beneficiary } from '../../../entities/Beneficiary';
 import { Order } from '../../../entities/Order';
 import { OrderLine } from '../../../entities/OrderLine';
 import { Product } from '../../../entities/Product';
 import { OrderStatuses } from '../../../utils/constants';
 import { OrderResource } from './OrderResource';
+import { OrdersReportResource } from './OrdersReportResource';
 
 export const OrderIndex = async (request: Request, response: Response) => {
   const orders = await Order.find({
@@ -214,4 +216,46 @@ export const OrderDelete = async (request: Request, response: Response) => {
   await Order.remove(order);
 
   return response.status(201).json({ message: 'Order removed successfully.', orderId });
+}
+
+export const OrdersReport = async (request: Request, response: Response) => {
+  const query = Order.createQueryBuilder('orders')
+    .leftJoinAndSelect('orders.beneficiary', 'beneficiary')
+    // .leftJoinAndSelect('beneficiary.parish', 'parish')
+    // .leftJoinAndSelect('orders.market', 'market')
+    .where({ ...response.locals.findQuery })
+
+  const startDate =  request.body.startDate;
+  if (startDate) {
+    query.andWhere('orders.created >= :start', { start: startDate })
+  }
+
+  const endDate = request.body.endDate;
+  if (endDate) {
+    query.andWhere('orders.created <= :end', { end: endDate });
+  }
+
+  const type = request.body.type;
+  if (type) {
+    switch (type) {
+      case 'withDiscount':
+        query.andWhere('orders.gratuitous > 0');
+        break;
+      case 'withoutDiscount':
+        query.andWhere(new Brackets(sqb => {
+          sqb.where("orders.gratuitous < 1");
+          sqb.orWhere("orders.gratuitous IS NULL");
+        }));
+        break;
+    }
+  }
+
+  const orders: Array<any> = await query.orderBy({
+    'orders.id': 'ASC'
+  })
+    .getMany();
+
+  const ordersReportResources = orders.map(order => new OrdersReportResource(order));
+
+  return response.status(200).json(ordersReportResources);
 }
