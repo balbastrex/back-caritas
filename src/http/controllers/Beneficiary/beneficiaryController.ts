@@ -140,11 +140,13 @@ export const BeneficiaryUpdate = async (request: Request, response: Response) =>
   beneficiary.children_under_18 = request.body.childrenUnder18;
   beneficiary.children_over_18 = request.body.childrenOver18;
 
-  const expireDate = moment(new Date(request.body.expires)).format('yyyy-MM-DD')
+  const expireDate = moment(request.body.expires).format('yyyy-MM-DD')
   const beneficiaryExpires = moment(beneficiary.expires).format('yyyy-MM-DD')
   if (expireDate !== beneficiaryExpires) {
     beneficiary.needs_print = true;
   }
+
+  beneficiary.expires = new Date(request.body.expires);
 
 
   beneficiary.parish = parish;
