@@ -18,6 +18,7 @@ import noteParamPolicies from './http/middleware/policies/NoteGeneralPolicy/Note
 import orderGeneralPolicy from './http/middleware/policies/OrderPolicies/OrderGeneralPolicy';
 import orderHistoryGeneralPolicy from './http/middleware/policies/OrderPolicies/OrderHistoryGeneralPolicy';
 import orderParamPolicies from './http/middleware/policies/OrderPolicies/OrderParamPolicies';
+import orderProductReportGeneralPolicy from './http/middleware/policies/OrderPolicies/OrderProductReportGeneralPolicy';
 import orderReportGeneralPolicy from './http/middleware/policies/OrderPolicies/OrderReportGeneralPolicy';
 import orderStatusParamPolicies from './http/middleware/policies/OrderPolicies/OrderStatusParamPolicies';
 import parishGeneralPolicy from './http/middleware/policies/ParishPolicies/ParishGeneralPolicy';
@@ -102,6 +103,7 @@ app.use('/api/v1/order/:orderId/status/:status', orderStatusParamPolicies);
 app.use('/api/v1/order/:id', orderParamPolicies);
 app.use('/api/v1/order-history', orderHistoryGeneralPolicy);
 app.use('/api/v1/order-report', orderReportGeneralPolicy);
+app.use('/api/v1/product-report', orderProductReportGeneralPolicy);
 
 app.use('/api/v1/receipt', receiptGeneralPolicy);
 
