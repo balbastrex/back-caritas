@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import moment from 'moment';
 import { Brackets } from 'typeorm';
 import { Beneficiary } from '../../../entities/Beneficiary';
 import { Order } from '../../../entities/Order';
@@ -221,8 +222,6 @@ export const OrderDelete = async (request: Request, response: Response) => {
 export const OrdersReport = async (request: Request, response: Response) => {
   const query = Order.createQueryBuilder('orders')
     .leftJoinAndSelect('orders.beneficiary', 'beneficiary')
-    // .leftJoinAndSelect('beneficiary.parish', 'parish')
-    // .leftJoinAndSelect('orders.market', 'market')
     .where({ ...response.locals.findQuery })
 
   const startDate =  request.body.startDate;
@@ -258,4 +257,55 @@ export const OrdersReport = async (request: Request, response: Response) => {
   const ordersReportResources = orders.map(order => new OrdersReportResource(order));
 
   return response.status(200).json(ordersReportResources);
+}
+
+export const ProductsReport = async (request: Request, response: Response) => {
+  const orderLines = await getOrderLines({ ...request.body, ...response.locals.findQuery });
+
+  const dates = new Set(orderLines.map((orderLine: any) => moment(orderLine.date).format('yyyy-MM-DD') ));
+
+  const result = Array.from(dates).map(date => {
+    const orderLinesByDate = orderLines.filter((orderLine: any) => moment(orderLine.date).format('yyyy-MM-DD') === date);
+    const totalQuantity = orderLinesByDate.reduce((acc: number, orderLine: any) => acc + parseFloat(orderLine.totalQuantity), 0);
+    const totalAmount = orderLinesByDate.reduce((acc: number, orderLine: any) => acc + parseFloat(orderLine.totalAmount), 0);
+    return {
+      date,
+      totalQuantity,
+      totalAmount,
+      orderLines: orderLinesByDate
+    }
+  })
+
+  return response.status(200).json(result);
+}
+
+const getOrderLines = async ({ startDate, endDate, type, filter, productId }) => {
+  const query = Order.createQueryBuilder('orders')
+    .leftJoin('orders.orderLines', 'orderLines')
+    .select("SUM(orderLines.units)", "totalQuantity")
+    .addSelect("orders.created", "date")
+    .addSelect("SUM(orderLines.total)", "totalAmount")
+    .addSelect("orderLines.productId", "productId")
+    .addSelect("orderLines.description", "product")
+    .where({ ...filter })
+
+  if (startDate) {
+    query.andWhere('orders.created >= :start', { start: startDate })
+  }
+
+  if (endDate) {
+    query.andWhere('orders.created <= :end', { end: endDate });
+  }
+
+  if (type) {
+    switch (type) {
+      case 'product':
+        query.andWhere('orderLines.productId = :productId', { productId });
+        break;
+    }
+  }
+
+  query.groupBy('orders.created, orderLines.productId');
+
+  return await query.getRawMany();
 }
