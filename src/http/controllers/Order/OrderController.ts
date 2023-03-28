@@ -266,12 +266,30 @@ export const ProductsReport = async (request: Request, response: Response) => {
 
   const result = Array.from(dates).map(date => {
     const orderLinesByDate = orderLines.filter((orderLine: any) => moment(orderLine.date).format('yyyy-MM-DD') === date);
-    const totalQuantity = orderLinesByDate.reduce((acc: number, orderLine: any) => acc + parseFloat(orderLine.totalQuantity), 0);
-    const totalAmount = orderLinesByDate.reduce((acc: number, orderLine: any) => acc + parseFloat(orderLine.totalAmount), 0);
+    const totalQuantity = orderLinesByDate.reduce((acc: number, orderLine: any) => {
+      if (orderLine.totalQuantity === null) {
+        return acc;
+      }
+
+      return acc + parseFloat(orderLine.totalQuantity);
+    }, 0);
+    const totalAmount = orderLinesByDate.reduce((acc: number, orderLine: any) => {
+      if (orderLine.totalAmount === null) {
+        return acc;
+      }
+      return acc + parseFloat(orderLine.totalAmount);
+    }, 0);
+    const totalCostAmount = orderLinesByDate.reduce((acc: number, orderLine: any) => {
+      if (orderLine.totalCostAmount === null) {
+        return acc;
+      }
+      return acc + parseFloat(orderLine.totalCostAmount);
+    }, 0);
     return {
       date,
       totalQuantity,
       totalAmount,
+      totalCostAmount,
       orderLines: orderLinesByDate
     }
   })
@@ -285,6 +303,7 @@ const getOrderLines = async ({ startDate, endDate, type, filter, productId }) =>
     .select("SUM(orderLines.units)", "totalQuantity")
     .addSelect("orders.created", "date")
     .addSelect("SUM(orderLines.total)", "totalAmount")
+    .addSelect("SUM(orderLines.total_cost)", "totalCostAmount")
     .addSelect("orderLines.productId", "productId")
     .addSelect("orderLines.description", "product")
     .where({ ...filter })
