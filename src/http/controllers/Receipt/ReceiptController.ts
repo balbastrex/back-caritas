@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Brackets } from 'typeorm';
 import { Order } from '../../../entities/Order';
 import { Product } from '../../../entities/Product';
 import { Receipt } from '../../../entities/Receipt';
@@ -123,7 +124,19 @@ export const ParishOrdersReport = async (request: Request, response: Response) =
     .leftJoinAndSelect('beneficiary.parish', 'parish')
     .leftJoinAndSelect('orders.market', 'market')
     .where({ ...response.locals.findQuery })
-    .andWhere('orders.gratuitous > 0')
+
+  const type = request.body.type;
+  switch (type) {
+    case 'withDiscount':
+      query.andWhere('orders.gratuitous > 0');
+      break;
+    case 'withoutDiscount':
+      query.andWhere(new Brackets(sqb => {
+        sqb.where("orders.gratuitous < 1");
+        sqb.orWhere("orders.gratuitous IS NULL");
+      }));
+      break;
+  }
 
   const startDate =  request.body.startDate;
   if (startDate) {
