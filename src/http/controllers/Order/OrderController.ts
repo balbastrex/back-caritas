@@ -324,7 +324,7 @@ const getOrderLines = async ({ startDate, endDate, type, filter, productId }) =>
     }
   }
 
-  query.groupBy('orders.created, orderLines.productId');
+  query.groupBy('orders.created, orderLines.productId, orderLines.description, orderLines.units, orderLines.total, orderLines.total_cost');
 
   return await query.getRawMany();
 }
