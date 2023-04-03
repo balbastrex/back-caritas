@@ -13,6 +13,7 @@ import {
 const router = Router();
 
 router.get('/api/v1/beneficiary', BeneficiaryIndex);
+router.get('/api/v1/beneficiary-excel-report', BeneficiaryIndex);
 router.post('/api/v1/beneficiary', BeneficiaryStore);
 router.get('/api/v1/beneficiary-selector', BeneficiaryIndexIdName);
 router.get('/api/v1/beneficiary-turn/:id', BeneficiaryByTurn);

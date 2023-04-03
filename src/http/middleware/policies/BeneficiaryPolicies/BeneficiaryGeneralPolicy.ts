@@ -27,6 +27,7 @@ const beneficiaryGeneralPolicy = (req: Request, res: Response, next: Function) =
       relations: ["parish"],
     }
   }
+
   if (res.locals.profileId === UserProfiles.DIRECTOR_ECONOMATO) {
     res.locals.findQuery = {
       where: {

@@ -1,9 +1,18 @@
 import { Request, Response } from 'express';
 import moment from 'moment/moment';
+import { AuthorizationType } from '../../../entities/AuthorizationType';
 import { Beneficiary } from '../../../entities/Beneficiary';
+import { CitizenType } from '../../../entities/CitizenType';
+import { CivilStateType } from '../../../entities/CivilStateType';
+import { Country } from '../../../entities/Country';
+import { EducationType } from '../../../entities/EducationType';
+import { EmploymentType } from '../../../entities/EmploymentType';
+import { FamilyType } from '../../../entities/FamilyType';
+import { GuardianshipType } from '../../../entities/GuardianshipType';
 import { Note } from '../../../entities/Note';
 import { Parish } from '../../../entities/Parish';
 import { Turn } from '../../../entities/Turn';
+import { BeneficiaryExcelReportResource } from './BeneficiaryExcelReportResource';
 import { BeneficiaryIdNameResource } from './BeneficiaryIdNameResource';
 import { BeneficiaryLicenseResource } from './BeneficiaryLicenseResource';
 import { BeneficiaryResource } from './BeneficiaryResource';
@@ -16,7 +25,27 @@ export const BeneficiaryIndex = async (request: Request, response: Response) => 
     relations: ['parish', 'parish.market']
   });
 
-  const BeneficiariesResources = beneficiaries.map(beneficiary => new BeneficiaryResource(beneficiary));
+  let BeneficiariesResources;
+  if (request.url.includes('beneficiary-excel-report')) {
+    console.log('beneficiary-excel-report');
+    BeneficiariesResources = beneficiaries.map(async beneficiary => {
+      const extraData = {
+        nationality: await Country.findOne(beneficiary.nationalityId),
+        family: await FamilyType.findOne(beneficiary.familyTypeId),
+        citizen: await CitizenType.findOne(beneficiary.citizenTypeId),
+        civilState: await CivilStateType.findOne(beneficiary.civilStateTypeId),
+        employment: await EmploymentType.findOne(beneficiary.employmentTypeId),
+        guardianShip: await GuardianshipType.findOne(beneficiary.guardianshipTypeId),
+        education: await EducationType.findOne(beneficiary.educationTypeId),
+        authorization: await AuthorizationType.findOne(beneficiary.authorizationTypeId),
+        turn: await Turn.findOne(beneficiary.turnId)
+      }
+
+      return new BeneficiariesResources(beneficiary, extraData);
+    });
+  } else {
+    BeneficiariesResources = beneficiaries.map(beneficiary => new BeneficiaryResource(beneficiary));
+  }
 
 /*  const duplicated = await Beneficiary.createQueryBuilder('beneficiary')
     .select('beneficiary.license', 'License')
@@ -104,7 +133,7 @@ export const BeneficiaryStore = async (request: Request, response: Response) => 
   beneficiary.authorizationTypeId = request.body.authorizationTypeId === "" ? null : request.body.authorizationTypeId;
   await beneficiary.save();
 
-  return response.status(200).json({ id: beneficiary.id });
+  return response.status(200).json({ id: beneficiary.id, license: beneficiary.license });
 }
 
 export const BeneficiaryUpdate = async (request: Request, response: Response) => {

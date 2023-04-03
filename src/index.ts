@@ -84,6 +84,7 @@ app.use('/api/v1/parish', parishGeneralPolicy);
 app.use('/api/v1/parish/:id', parishParamPolicies);
 
 app.use('/api/v1/beneficiary', beneficiaryGeneralPolicy);
+app.use('/api/v1/beneficiary-excel-report', beneficiaryGeneralPolicy);
 app.use('/api/v1/beneficiary/:id', beneficiaryParamPolicies);
 app.use('/api/v1/beneficiary-selector', beneficiarySelectorPolicy);
 app.use('/api/v1/beneficiary-license', beneficiaryLicensePolicy);
