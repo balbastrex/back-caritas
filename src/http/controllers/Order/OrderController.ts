@@ -297,16 +297,17 @@ export const ProductsReport = async (request: Request, response: Response) => {
   return response.status(200).json(result);
 }
 
-const getOrderLines = async ({ startDate, endDate, type, filter, productId }) => {
+const getOrderLines = async ({ startDate, endDate, type, marketId, productId }) => {
   const query = Order.createQueryBuilder('orders')
     .leftJoin('orders.orderLines', 'orderLines')
-    .select("SUM(orderLines.units)", "totalQuantity")
-    .addSelect("orders.created", "date")
+    .select("orders.created", "date")
+    .addSelect("SUM(orderLines.units)", "totalQuantity")
     .addSelect("SUM(orderLines.total)", "totalAmount")
     .addSelect("SUM(orderLines.total_cost)", "totalCostAmount")
+    .addSelect("orderLines.cost", "cost")
     .addSelect("orderLines.productId", "productId")
     .addSelect("orderLines.description", "product")
-    .where({ ...filter })
+    .where({ marketId })
 
   if (startDate) {
     query.andWhere('orders.created >= :start', { start: startDate })
@@ -324,7 +325,7 @@ const getOrderLines = async ({ startDate, endDate, type, filter, productId }) =>
     }
   }
 
-  query.groupBy('orders.created, orderLines.productId, orderLines.description, orderLines.units, orderLines.total, orderLines.total_cost');
+  query.groupBy('orderLines.productId, orderLines.cost');
 
   return await query.getRawMany();
 }
