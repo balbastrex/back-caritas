@@ -1,7 +1,7 @@
 import { Order } from '../../../entities/Order';
 
 export class OrdersReportResource {
-  id: number;
+  beneficiaryId: number;
   amount: number;
   parishAmount: string;
   beneficiaryAmount: string;
@@ -16,7 +16,7 @@ export class OrdersReportResource {
   createdAt: number;
 
   constructor(order: Order) {
-    this.id = order.id;
+    this.beneficiaryId = order.beneficiary?.id
     this.amount = order.amount;
     this.gratuitous = order.gratuitous;
     this.beneficiaryName = order.beneficiary?.firstname + ' ' + order.beneficiary?.lastname1 + ' ' + order.beneficiary?.lastname2;

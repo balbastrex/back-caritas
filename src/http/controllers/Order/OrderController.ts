@@ -254,9 +254,25 @@ export const OrdersReport = async (request: Request, response: Response) => {
   })
     .getMany();
 
+  const totalServices = orders.length;
+  let totalParish = 0;
+  let totalBeneficiary = 0;
+  let total = 0;
+  orders.forEach(order => {
+    totalParish += ((order.gratuitous || 0) / 100) * order.amount;
+    totalBeneficiary += order.amount - (((order.gratuitous || 0) / 100) * order.amount);
+    total += order.amount;
+  })
+
   const ordersReportResources = orders.map(order => new OrdersReportResource(order));
 
-  return response.status(200).json(ordersReportResources);
+  return response.status(200).json({
+    totalServices,
+    totalParish: totalParish.toFixed(2),
+    totalBeneficiary: totalBeneficiary.toFixed(2),
+    total: total.toFixed(2),
+    orders: ordersReportResources
+  });
 }
 
 export const ProductsReport = async (request: Request, response: Response) => {
