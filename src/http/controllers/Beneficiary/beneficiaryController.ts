@@ -25,26 +25,35 @@ export const BeneficiaryIndex = async (request: Request, response: Response) => 
     relations: ['parish', 'parish.market']
   });
 
-  let BeneficiariesResources;
+  let beneficiariesResources;
   if (request.url.includes('beneficiary-excel-report')) {
+    beneficiariesResources = [];
     console.log('beneficiary-excel-report');
-    BeneficiariesResources = beneficiaries.map(async beneficiary => {
-      const extraData = {
-        nationality: await Country.findOne(beneficiary.nationalityId),
-        family: await FamilyType.findOne(beneficiary.familyTypeId),
-        citizen: await CitizenType.findOne(beneficiary.citizenTypeId),
-        civilState: await CivilStateType.findOne(beneficiary.civilStateTypeId),
-        employment: await EmploymentType.findOne(beneficiary.employmentTypeId),
-        guardianShip: await GuardianshipType.findOne(beneficiary.guardianshipTypeId),
-        education: await EducationType.findOne(beneficiary.educationTypeId),
-        authorization: await AuthorizationType.findOne(beneficiary.authorizationTypeId),
-        turn: await Turn.findOne(beneficiary.turnId)
-      }
+    for (const beneficiary of beneficiaries) {
+      const nationality = (await Country.findOne(beneficiary.nationalityId))?.name;
+      const family = (await FamilyType.findOne(beneficiary.familyTypeId))?.name;
+      const citizen = (await CitizenType.findOne(beneficiary.citizenTypeId))?.name;
+      const civilState = (await CivilStateType.findOne(beneficiary.civilStateTypeId))?.name;
+      const employment = (await EmploymentType.findOne(beneficiary.employmentTypeId))?.name;
+      const guardianShip = (await GuardianshipType.findOne(beneficiary.guardianshipTypeId))?.name;
+      const education = (await EducationType.findOne(beneficiary.educationTypeId))?.name;
+      const authorization = (await AuthorizationType.findOne(beneficiary.authorizationTypeId))?.name;
+      const turn = (await Turn.findOne(beneficiary.turnId))?.name;
 
-      return new BeneficiariesResources(beneficiary, extraData);
-    });
+      beneficiariesResources.push(new BeneficiaryExcelReportResource(beneficiary, {
+        nationality,
+        family,
+        citizen,
+        civilState,
+        employment,
+        guardianShip,
+        education,
+        authorization,
+        turn,
+      }));
+    }
   } else {
-    BeneficiariesResources = beneficiaries.map(beneficiary => new BeneficiaryResource(beneficiary));
+    beneficiariesResources = beneficiaries.map(beneficiary => new BeneficiaryResource(beneficiary));
   }
 
 /*  const duplicated = await Beneficiary.createQueryBuilder('beneficiary')
@@ -56,7 +65,7 @@ export const BeneficiaryIndex = async (request: Request, response: Response) => 
 
   console.log(duplicated);*/
 
-  return response.status(200).json(BeneficiariesResources);
+  return response.status(200).json(beneficiariesResources);
 };
 
 export const BeneficiaryIndexIdName = async (request: Request, response: Response) => {
