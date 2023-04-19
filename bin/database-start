@@ -14,9 +14,7 @@ echo "[$(date +"%Y-%m-%d %T")] Stopping lingering containers..."
 
 echo "[$(date +"%Y-%m-%d %T")] Starting the container of database..."
 
-if [ "${REBUILD_IMAGE}" = true ]; then
-    ${DOCKER_COMPOSE} -f ${PROJECT_PATH}/database-compose.yml build --no-cache
-fi
+${DOCKER_COMPOSE} -f ${PROJECT_PATH}/database-compose.yml build --no-cache
 
 ${DOCKER_COMPOSE} -f ${PROJECT_PATH}/database-compose.yml up -d
 ${DOCKER_COMPOSE} -f ${PROJECT_PATH}/database-compose.yml logs -f
