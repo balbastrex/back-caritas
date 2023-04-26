@@ -6,6 +6,7 @@ import { Order } from '../../../entities/Order';
 import { OrderLine } from '../../../entities/OrderLine';
 import { Product } from '../../../entities/Product';
 import { OrderStatuses } from '../../../utils/constants';
+import { OrderIndexResource } from './OrderIndexResource';
 import { OrderResource } from './OrderResource';
 import { OrdersReportResource } from './OrdersReportResource';
 
@@ -13,11 +14,10 @@ export const OrderIndex = async (request: Request, response: Response) => {
   const orders = await Order.find({
     where: {...response.locals.findQuery},
     order: { created: 'DESC', id: 'DESC' },
-    relations: ['beneficiary', 'beneficiary.parish', 'market', 'user', 'orderLines'],
-
+    relations: ['beneficiary', 'user'],
   });
 
-  const ordersResponse: OrderResource[] = orders.map(order => new OrderResource(order));
+  const ordersResponse: OrderIndexResource[] = orders.map(order => new OrderIndexResource(order));
 
   return response.status(200).json(ordersResponse);
 }
@@ -169,7 +169,7 @@ export const OrderUpdate = async (request: Request, response: Response) => {
     await product.save();
   }
 
-  return response.status(201).json({ message: 'Order created successfully.' });
+  return response.status(201).json({ message: 'Order Updated successfully.' });
 }
 
 export const OrderUpdateStatus = async (request: Request, response: Response) => {

@@ -15,7 +15,9 @@ import { Turn } from '../../../entities/Turn';
 import { BeneficiaryExcelReportResource } from './BeneficiaryExcelReportResource';
 import { BeneficiaryIdNameResource } from './BeneficiaryIdNameResource';
 import { BeneficiaryLicenseResource } from './BeneficiaryLicenseResource';
+import { BeneficiaryNeedsPrintResource } from './BeneficiaryNeedsPrintResource';
 import { BeneficiaryResource } from './BeneficiaryResource';
+import { BeneficiarySelectorResource } from './BeneficiarySelectorResource';
 import { BeneficiaryTurnResource } from './BeneficiaryTurnResource';
 
 export const BeneficiaryIndex = async (request: Request, response: Response) => {
@@ -28,7 +30,6 @@ export const BeneficiaryIndex = async (request: Request, response: Response) => 
   let beneficiariesResources;
   if (request.url.includes('beneficiary-excel-report')) {
     beneficiariesResources = [];
-    console.log('beneficiary-excel-report');
     for (const beneficiary of beneficiaries) {
       const nationality = (await Country.findOne(beneficiary.nationalityId))?.name;
       const family = (await FamilyType.findOne(beneficiary.familyTypeId))?.name;
@@ -68,23 +69,36 @@ export const BeneficiaryIndex = async (request: Request, response: Response) => 
   return response.status(200).json(beneficiariesResources);
 };
 
-export const BeneficiaryIndexIdName = async (request: Request, response: Response) => {
-  const beneficiaries = await Beneficiary.find({
-    ...response.locals.findQuery,
+export const BeneficiaryOrderOptions = async (request: Request, response: Response) => {
+  const beneficiary = await Beneficiary.findOne({
+    where: {
+      ...response.locals.findQuery.where,
+      id: request.params.id,
+    },
     relations: ['orders', 'parish', 'parish.market', 'notes']
   });
 
-  const beneficiariesResources = beneficiaries.map(beneficiary => {
+  let beneficiaryOrderOptionsResource = null;
+  if (beneficiary) {
     const lastDateOrder = beneficiary.orders.length > 0 ? beneficiary.orders[beneficiary.orders.length - 1].created : new Date();
-    return new BeneficiaryIdNameResource(beneficiary, lastDateOrder);
+    beneficiaryOrderOptionsResource = new BeneficiaryIdNameResource(beneficiary, lastDateOrder);
+  }
+
+  return response.status(200).json(beneficiaryOrderOptionsResource);
+}
+
+export const BeneficiarySelector = async (request: Request, response: Response) => {
+  const beneficiaries = await Beneficiary.find({
+    ...response.locals.findQuery,
   });
 
-  return response.status(200).json(beneficiariesResources);
+  const beneficiariesSelectorResources = beneficiaries.map(beneficiary => new BeneficiarySelectorResource(beneficiary));
+
+  return response.status(200).json(beneficiariesSelectorResources);
 }
 
 export const BeneficiaryShow = async (request: Request, response: Response) => {
   const beneficiary: Beneficiary = await Beneficiary.findOne(response.locals.findQuery);
-  console.log('show')
   if (!beneficiary) {
     return response.status(404).json({ message: 'Beneficiary not found.' });
   }
@@ -256,6 +270,13 @@ const isIdentifyDuplicated = (cif) => {
 
 export const BeneficiariesNeedsPrint = async (request: Request, response: Response) => {
   const beneficiaries = await Beneficiary.find({ ...response.locals.findQuery });
+  const beneficiariesNeedsPrintResources = beneficiaries.map(beneficiary => new BeneficiaryNeedsPrintResource(beneficiary));
+
+  return response.status(200).json(beneficiariesNeedsPrintResources);
+}
+
+export const BeneficiariesPrint = async (request: Request, response: Response) => {
+  const beneficiaries = await Beneficiary.find({ ...response.locals.findQuery });
   const beneficiariesLicenseResources = beneficiaries.map(beneficiary => new BeneficiaryLicenseResource(beneficiary));
 
   return response.status(200).json(beneficiariesLicenseResources);
@@ -280,9 +301,8 @@ const licenseGenerator = async (marketId) => {
     .getOne();
 
   if (lastBeneficiary) {
-    console.log('license', lastBeneficiary.license);
     return lastBeneficiary.license + 1;
   }
-  console.log('license', 1);
+
   return 1;
 }
