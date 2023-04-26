@@ -15,6 +15,7 @@ import { Turn } from '../../../entities/Turn';
 import { BeneficiaryExcelReportResource } from './BeneficiaryExcelReportResource';
 import { BeneficiaryIdNameResource } from './BeneficiaryIdNameResource';
 import { BeneficiaryLicenseResource } from './BeneficiaryLicenseResource';
+import { BeneficiaryNeedsPrintResource } from './BeneficiaryNeedsPrintResource';
 import { BeneficiaryResource } from './BeneficiaryResource';
 import { BeneficiarySelectorResource } from './BeneficiarySelectorResource';
 import { BeneficiaryTurnResource } from './BeneficiaryTurnResource';
@@ -268,6 +269,13 @@ const isIdentifyDuplicated = (cif) => {
 }
 
 export const BeneficiariesNeedsPrint = async (request: Request, response: Response) => {
+  const beneficiaries = await Beneficiary.find({ ...response.locals.findQuery });
+  const beneficiariesNeedsPrintResources = beneficiaries.map(beneficiary => new BeneficiaryNeedsPrintResource(beneficiary));
+
+  return response.status(200).json(beneficiariesNeedsPrintResources);
+}
+
+export const BeneficiariesPrint = async (request: Request, response: Response) => {
   const beneficiaries = await Beneficiary.find({ ...response.locals.findQuery });
   const beneficiariesLicenseResources = beneficiaries.map(beneficiary => new BeneficiaryLicenseResource(beneficiary));
 

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {
-  BeneficiariesNeedsPrint,
+  BeneficiariesNeedsPrint, BeneficiariesPrint,
   BeneficiaryByTurn,
   BeneficiaryIndex,
   BeneficiaryOrderOptions,
@@ -23,6 +23,7 @@ router.get('/api/v1/beneficiary/:id', BeneficiaryShow);
 router.put('/api/v1/beneficiary/:id', BeneficiaryUpdate);
 router.get('/api/v1/beneficiary/:id/notes', IndexBeneficiaryNotes);
 router.get('/api/v1/beneficiary-license', BeneficiariesNeedsPrint);
+router.get('/api/v1/beneficiary-license/print', BeneficiariesPrint);
 router.put('/api/v1/beneficiaries-printed', setBeneficiariesPrinted);
 
 export default router;
