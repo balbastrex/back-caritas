@@ -11,7 +11,6 @@ import { OrderResource } from './OrderResource';
 import { OrdersReportResource } from './OrdersReportResource';
 
 export const OrderIndex = async (request: Request, response: Response) => {
-  console.log('-> response.locals.findQuery', response.locals.findQuery)
   const orders = await Order.find({
     where: {...response.locals.findQuery},
     order: { created: 'DESC', id: 'DESC' },

@@ -3,7 +3,8 @@ import {
   BeneficiariesNeedsPrint,
   BeneficiaryByTurn,
   BeneficiaryIndex,
-  BeneficiaryIndexIdName,
+  BeneficiaryOrderOptions,
+  BeneficiarySelector,
   BeneficiaryShow,
   BeneficiaryStore,
   BeneficiaryUpdate,
@@ -15,7 +16,8 @@ const router = Router();
 router.get('/api/v1/beneficiary', BeneficiaryIndex);
 router.get('/api/v1/beneficiary-excel-report', BeneficiaryIndex);
 router.post('/api/v1/beneficiary', BeneficiaryStore);
-router.get('/api/v1/beneficiary-selector', BeneficiaryIndexIdName);
+router.get('/api/v1/beneficiary-selector', BeneficiarySelector);
+router.get('/api/v1/beneficiary-selector/:id', BeneficiaryOrderOptions);
 router.get('/api/v1/beneficiary-turn/:id', BeneficiaryByTurn);
 router.get('/api/v1/beneficiary/:id', BeneficiaryShow);
 router.put('/api/v1/beneficiary/:id', BeneficiaryUpdate);
