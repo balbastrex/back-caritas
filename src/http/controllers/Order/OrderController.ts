@@ -280,37 +280,37 @@ export const ProductsReport = async (request: Request, response: Response) => {
 
   const dates = new Set(orderLines.map((orderLine: any) => moment(orderLine.date).format('yyyy-MM-DD') ));
 
-  const result = Array.from(dates).map(date => {
-    const orderLinesByDate = orderLines.filter((orderLine: any) => moment(orderLine.date).format('yyyy-MM-DD') === date);
-    const totalQuantity = orderLinesByDate.reduce((acc: number, orderLine: any) => {
+  // const result = Array.from(dates).map(date => {
+    //  const orderLines = orderLines;// .filter((orderLine: any) => moment(orderLine.date).format('yyyy-MM-DD') === date);
+    const totalQuantity = orderLines.reduce((acc: number, orderLine: any) => {
       if (orderLine.totalQuantity === null) {
         return acc;
       }
 
       return acc + parseFloat(orderLine.totalQuantity);
     }, 0);
-    const totalAmount = orderLinesByDate.reduce((acc: number, orderLine: any) => {
+    const totalAmount = orderLines.reduce((acc: number, orderLine: any) => {
       if (orderLine.totalAmount === null) {
         return acc;
       }
       return acc + parseFloat(orderLine.totalAmount);
     }, 0);
-    const totalCostAmount = orderLinesByDate.reduce((acc: number, orderLine: any) => {
+    const totalCostAmount = orderLines.reduce((acc: number, orderLine: any) => {
       if (orderLine.totalCostAmount === null) {
         return acc;
       }
       return acc + parseFloat(orderLine.totalCostAmount);
     }, 0);
-    return {
-      date,
+    const result = {
+      // date,
       totalQuantity,
       totalAmount,
       totalCostAmount,
-      orderLines: orderLinesByDate
+      orderLines
     }
-  })
+  // })
 
-  return response.status(200).json(result);
+  return response.status(200).json([result]);
 }
 
 const getOrderLines = async ({ startDate, endDate, type, marketId, productId }) => {
