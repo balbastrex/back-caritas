@@ -278,7 +278,7 @@ export const OrdersReport = async (request: Request, response: Response) => {
 export const ProductsReport = async (request: Request, response: Response) => {
   const orderLines = await getOrderLines({ ...request.body, ...response.locals.findQuery });
 
-  const dates = new Set(orderLines.map((orderLine: any) => moment(orderLine.date).format('yyyy-MM-DD') ));
+  // const dates = new Set(orderLines.map((orderLine: any) => moment(orderLine.date).format('yyyy-MM-DD') ));
 
   // const result = Array.from(dates).map(date => {
     //  const orderLines = orderLines;// .filter((orderLine: any) => moment(orderLine.date).format('yyyy-MM-DD') === date);
