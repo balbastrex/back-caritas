@@ -269,10 +269,15 @@ const isIdentifyDuplicated = (cif) => {
 }
 
 export const BeneficiariesNeedsPrint = async (request: Request, response: Response) => {
+  const totalBeneficiaries = await Beneficiary.count();
   const beneficiaries = await Beneficiary.find({ ...response.locals.findQuery });
   const beneficiariesNeedsPrintResources = beneficiaries.map(beneficiary => new BeneficiaryNeedsPrintResource(beneficiary));
 
-  return response.status(200).json(beneficiariesNeedsPrintResources);
+  return response.status(200).json({
+    total: totalBeneficiaries,
+    expired: beneficiaries.length,
+    beneficiaries: beneficiariesNeedsPrintResources
+  });
 }
 
 export const BeneficiariesPrint = async (request: Request, response: Response) => {
