@@ -11,7 +11,7 @@ import beneficiaryLicensePolicy from './http/middleware/policies/BeneficiaryPoli
 import beneficiaryParamPolicies from './http/middleware/policies/BeneficiaryPolicies/BeneficiaryParamPolicies';
 import beneficiarySelectorPolicy from './http/middleware/policies/BeneficiaryPolicies/BeneficiarySelectorPolicy';
 import beneficiaryTurnPolicy from './http/middleware/policies/BeneficiaryPolicies/BeneficiaryTurnPolicy';
-import dashboardGeneralPolicy from './http/middleware/policies/Dashboard/DashboardGeneralPolicy';
+import dashboardGeneralPolicy from './http/middleware/policies/DashboardPolicies/DashboardGeneralPolicy';
 import marketGeneralPolicy from './http/middleware/policies/MarketPolicies/MarketGeneralPolicy';
 import marketParamPolicies from './http/middleware/policies/MarketPolicies/MarketParamPolicies';
 import noteGeneralPolicy from './http/middleware/policies/NoteGeneralPolicy/NoteGeneralPolicy';
@@ -28,6 +28,7 @@ import productGeneralPolicy from './http/middleware/policies/ProductPolicies/Pro
 import providerGeneralPolicy from './http/middleware/policies/ProviderPolicy/ProviderGeneralPolicy';
 import providerParamPolicies from './http/middleware/policies/ProviderPolicy/ProviderParamPolicies';
 import receiptGeneralPolicy from './http/middleware/policies/ReceiptPolicy/ReceiptGeneralPolicy';
+import reportGeneralPolicy from './http/middleware/policies/ReportPolicies/ReportGeneralPolicy';
 import serviceGeneralPolicy from './http/middleware/policies/ServicePolicies/ServiceGeneralPolicy';
 import serviceParamPolicies from './http/middleware/policies/ServicePolicies/ServiceParamPolicies';
 import turnGeneralPolicy from './http/middleware/policies/TurnPolicies/TurnGeneralPolicy';
@@ -56,6 +57,7 @@ import receiptRoutes from './routes/receipt.routes';
 import providerRoutes from './routes/provider.routes';
 import noteRoutes from './routes/note.routes';
 import dashboardRoutes from './routes/dashboard.routes';
+import reportRoutes from './routes/report.routes';
 
 dotenv.config();
 
@@ -121,6 +123,8 @@ app.use('/api/v1/note/:id', noteParamPolicies);
 
 app.use('/api/v1/dashboard', dashboardGeneralPolicy);
 
+app.use('/api/v1/report', reportGeneralPolicy);
+
 app.use(userRoutes);
 app.use(marketRoutes);
 app.use(parishRoutes);
@@ -142,6 +146,7 @@ app.use(receiptRoutes);
 app.use(providerRoutes);
 app.use(noteRoutes);
 app.use(dashboardRoutes);
+app.use(reportRoutes);
 
 app.listen(PORT, () => {
   console.log(`server started at http://localhost:${PORT}`);
