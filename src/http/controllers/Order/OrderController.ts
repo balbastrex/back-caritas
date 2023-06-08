@@ -9,6 +9,7 @@ import { OrderStatuses } from '../../../utils/constants';
 import { OrderIndexResource } from './OrderIndexResource';
 import { OrderResource } from './OrderResource';
 import { OrdersReportResource } from './OrdersReportResource';
+import {OrderCloseCartReportResource} from "./OrderCloseCartReportResource";
 
 export const OrderIndex = async (request: Request, response: Response) => {
   const orders = await Order.find({
@@ -22,16 +23,32 @@ export const OrderIndex = async (request: Request, response: Response) => {
   return response.status(200).json(ordersResponse);
 }
 
-export const OrderHistoryIndex = async (request: Request, response: Response) => {
+export const OrderCloseCartReport = async (request: Request, response: Response) => {
   const orders = await Order.find({
+    where: {...response.locals.findQuery},
+    order: { created: 'DESC', id: 'DESC' },
+    relations: ['beneficiary', 'market'],
+  });
+
+  const ordersResponse: OrderCloseCartReportResource[] = orders.map(order => new OrderCloseCartReportResource(order));
+
+  return response.status(200).json({
+    marketName: orders.length > 0 ? orders[0].market.name : 'N/A',
+    createdAt: moment(new Date()).format('DD-MM-yyyy'),
+    orders: ordersResponse
+  });
+}
+
+export const OrderHistoryIndex = async (request: Request, response: Response) => {
+  /*const orders = await Order.find({
     where: {...response.locals.findQuery},
     order: { created: 'DESC', id: 'DESC' },
     relations: ['beneficiary', 'beneficiary.parish', 'market', 'user', 'orderLines'],
   });
 
-  const ordersResponse: OrderResource[] = orders.map(order => new OrderResource(order));
+  const ordersResponse: OrderResource[] = orders.map(order => new OrderResource(order));*/
 
-  return response.status(200).json(ordersResponse);
+  return response.status(200).json([]);
 }
 
 export const BeneficiaryOrderHistoryIndex = async (request: Request, response: Response) => {
@@ -250,7 +267,7 @@ export const OrdersReport = async (request: Request, response: Response) => {
   }
 
   const orders: Array<any> = await query.orderBy({
-    'orders.id': 'ASC'
+    'beneficiary.firstname': 'ASC'
   })
     .getMany();
 
