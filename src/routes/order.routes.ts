@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {
-  BeneficiaryOrderHistoryIndex, OrderDelete,
+  BeneficiaryOrderHistoryIndex, OrderCloseCartReport, OrderDelete,
   OrderHistoryIndex,
   OrderIndex,
   OrderShow, OrdersReport,
@@ -13,6 +13,7 @@ import {
 const router = Router();
 
 router.get('/api/v1/order', OrderIndex);
+router.get('/api/v1/order/close-cart', OrderCloseCartReport);
 router.post('/api/v1/order', OrderStore);
 router.get('/api/v1/order/:id', OrderShow);
 router.put('/api/v1/order/:id', OrderUpdate);
