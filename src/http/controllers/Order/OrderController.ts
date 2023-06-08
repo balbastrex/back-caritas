@@ -360,5 +360,7 @@ const getOrderLines = async ({ startDate, endDate, type, marketId, productId }) 
 
   query.groupBy('orderLines.productId, orderLines.cost');
 
+  query.orderBy('orderLines.description', 'ASC');
+
   return await query.getRawMany();
 }
