@@ -16,7 +16,7 @@ export class OrdersReportResource {
   createdAt: number;
 
   constructor(order: Order) {
-    this.beneficiaryId = order.beneficiary?.id
+    this.beneficiaryId = order.beneficiary?.license
     this.amount = order.amount;
     this.gratuitous = order.gratuitous;
     this.beneficiaryName = order.beneficiary?.firstname + ' ' + order.beneficiary?.lastname1 + ' ' + order.beneficiary?.lastname2;

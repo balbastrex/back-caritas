@@ -115,6 +115,10 @@ export const BeneficiaryStore = async (request: Request, response: Response) => 
     return response.status(404).json({ message: 'Este NIF/NIE ya existe.' });
   }
 
+  if (request.body.license !== 0 && await isLicenseDuplicated(request.body.license)) {
+    return response.status(404).json({ message: 'Este número de licencia ya existe.' });
+  }
+
   /*if (!response.locals.parishId) {
     return response.status(404).json({ message: 'Parish not found.' });
   }*/
@@ -266,6 +270,10 @@ export const IndexBeneficiaryNotes = async (request: Request, response: Response
 
 const isIdentifyDuplicated = (cif) => {
   return Beneficiary.findOne({ where: { cif: cif } });
+}
+
+const isLicenseDuplicated = (license) => {
+  return Beneficiary.findOne({ where: { license: license } });
 }
 
 export const BeneficiariesNeedsPrint = async (request: Request, response: Response) => {
