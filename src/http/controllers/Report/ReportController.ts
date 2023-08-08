@@ -4,23 +4,23 @@ import {Order} from "../../../entities/Order";
 export const memoryPeriod = async (request: Request, response: Response) => {
   const startDate = request.body.startDate;
   const endDate = request.body.endDate;
+  const marketId = response.locals.marketId;
 
-  const numberOfLicense = getNumberOfLicense({startDate, endDate})
-  const totalBeneficiaries = 587;
-  const numberOfMinors = 114;
-  const firstTimeLicense = 10;
-  const numberOfForeigners = 57;
-  const numberOfNationals = 57;
-  const numberOfActiveLicense = 498;
-  const amountBeneficiaries = 8957.50;
-  const amountParish = 2478.54;
+  const amountOrders = await getAmountOrders({startDate, endDate, marketId});
+  const numberOfLicense = await getNumberOfLicense({startDate, endDate, marketId })
+  const totalBeneficiaries = await getNumberOfBeneficiaries({startDate, endDate, marketId })
+  const firstTimeLicense = await getNumberOfFirstBeneficiaries({startDate, endDate, marketId});
+  const numberOfNationals = await getSpanishFamilies({startDate, endDate, marketId });
+  const numberOfActiveLicense = 'x';
+  const amountBeneficiaries = amountOrders.totalBeneficiary;
+  const amountParish = amountOrders.totalParish;
 
   return response.status(200).send({
     numberOfLicense,
-    totalBeneficiaries,
-    numberOfMinors,
+    totalBeneficiaries: totalBeneficiaries.numberOfFamilyUnit,
+    numberOfMinors: totalBeneficiaries.numberOfMinors,
     firstTimeLicense,
-    numberOfForeigners,
+    numberOfForeigners: numberOfLicense - numberOfNationals,
     numberOfNationals,
     numberOfActiveLicense,
     amountBeneficiaries,
@@ -28,14 +28,87 @@ export const memoryPeriod = async (request: Request, response: Response) => {
   });
 }
 
-const getNumberOfLicense = async ({startDate, endDate}) => {
+const getNumberOfLicense = async ({startDate, endDate, marketId}) => {
   const numberOfLicense = await Order.createQueryBuilder('orders')
-      //.select('COUNT(DISTINCT orders.beneficiaryId)', 'numberOfLicense')
-      .where('orders.created >= :start', { start: startDate })
-      .andWhere('orders.created <= :end', { end: endDate })
-      .distinct(true)
-      .getRawOne();
-  console.log('-> numberOfLicense', numberOfLicense)
+    .select('COUNT(DISTINCT orders.beneficiaryId)', 'numberOfLicense')
+    .where('orders.id_economato = :economato', { economato: marketId })
+    .andWhere('orders.created >= :start', { start: startDate })
+    .andWhere('orders.created <= :end', { end: endDate })
+    .getRawOne();
 
-  return numberOfLicense;
+  return parseInt(numberOfLicense.numberOfLicense);
+}
+
+const getNumberOfBeneficiaries = async ({startDate, endDate, marketId}) => {
+  const numberOfFamilyUnit = await Order.createQueryBuilder('orders')
+    .distinctOn(['orders.beneficiaryId'])
+    .where('orders.id_economato = :economato', { economato: marketId })
+    .andWhere('orders.created >= :start', { start: startDate })
+    .andWhere('orders.created <= :end', { end: endDate })
+    .innerJoin('orders.beneficiary', 'beneficiary')
+    .select('SUM (beneficiary.family_unit)', 'familyUnit')
+    .addSelect('SUM (beneficiary.minors)', 'minors')
+    .getRawOne();
+
+  return {
+    numberOfFamilyUnit: parseInt(numberOfFamilyUnit.familyUnit),
+    numberOfMinors: parseInt(numberOfFamilyUnit.minors)
+  }
+}
+
+const getSpanishFamilies = async ({startDate, endDate, marketId}) => {
+  const numberOfSpanishFamilies = await Order.createQueryBuilder('orders')
+    .distinctOn(['orders.beneficiaryId'])
+    .where('orders.id_economato = :economato', { economato: marketId })
+    .andWhere('orders.created >= :start', { start: startDate })
+    .andWhere('orders.created <= :end', { end: endDate })
+    .leftJoin('orders.beneficiary', 'beneficiary')
+    .andWhere('beneficiary.id_citizen_type = :citizenType', { citizenType: 1 })
+    .select('COUNT (beneficiary.id)', 'citizenType')
+    .getRawOne();
+
+  return parseInt(numberOfSpanishFamilies.citizenType)
+}
+
+const getAmountOrders = async ({startDate, endDate, marketId}) => {
+  const orders = await Order.createQueryBuilder('orders')
+    .where('orders.id_economato = :economato', { economato: marketId })
+    .andWhere('orders.created >= :start', { start: startDate })
+    .andWhere('orders.created <= :end', { end: endDate })
+    .getMany();
+
+  let totalParish = 0;
+  let totalBeneficiary = 0;
+  orders.forEach(order => {
+    totalParish += ((order.gratuitous || 0) / 100) * order.amount;
+    totalBeneficiary += order.amount - (((order.gratuitous || 0) / 100) * order.amount);
+  })
+
+  return {
+    totalParish: totalParish.toFixed(2),
+    totalBeneficiary: totalBeneficiary.toFixed(2),
+  };
+}
+
+const getNumberOfFirstBeneficiaries = async ({startDate, endDate, marketId}) => {
+  const priorOrders = await Order.createQueryBuilder('orders')
+    .distinctOn(['orders.beneficiaryId'])
+    .where('orders.id_economato = :economato', { economato: marketId })
+    .andWhere('orders.created < :start', { start: startDate })
+    //.andWhere('orders.created <= :end', { end: endDate })
+    .select('orders.beneficiaryId', 'priorPeriodOrders')
+    .getRawMany();
+
+  const latestOrders = priorOrders.map(beneficiary => beneficiary.priorPeriodOrders)
+
+  const numberOfFirstFamilies = await Order.createQueryBuilder('orders')
+    .distinctOn(['orders.beneficiaryId'])
+    .where('orders.id_economato = :economato', { economato: marketId })
+    .andWhere('orders.created >= :start', { start: startDate })
+    .andWhere('orders.created <= :end', { end: endDate })
+    .andWhere('orders.beneficiaryId NOT IN (:priorPeriodOrders)', { priorPeriodOrders: latestOrders })
+    .select('COUNT (orders.beneficiaryId)', 'firstFamilyOrders')
+    .getRawOne();
+
+  return parseInt(numberOfFirstFamilies.firstFamilyOrders)
 }
