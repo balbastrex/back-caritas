@@ -181,10 +181,10 @@ export const ParishOrdersReport = async (request: Request, response: Response) =
   return response.status(200).json(result);
 }
 
-const getParishAmount = (gratuitous: number, amount: number) => {
+export const getParishAmount = (gratuitous: number, amount: number) => {
   return ((gratuitous / 100) * amount);
 }
-const getBeneficiaryAmount = (gratuitous: number, amount: number) => {
+export const getBeneficiaryAmount = (gratuitous: number, amount: number) => {
   return amount - getParishAmount(gratuitous, amount)
 }
 
