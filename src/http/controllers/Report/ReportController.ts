@@ -129,6 +129,7 @@ export const BeneficiariesByAge = async (request: Request, response: Response) =
   const beneficiaries = await Beneficiary.createQueryBuilder('beneficiaries')
     .leftJoin('beneficiaries.parish', 'parish')
     .where('parish.marketId = :marketId', { marketId: marketId })
+    .andWhere('beneficiaries.needs_print = false')
     .select('SUM (beneficiaries.minors)', 'minors')
     .addSelect('SUM (beneficiaries.adults)', 'adults')
     .getRawOne();
@@ -151,6 +152,18 @@ export const WeekReport = async (request: Request, response: Response) => {
     .groupBy('orderLine.productId')
     .orderBy('units', 'DESC')
     .getRawOne();
+
+  if (!most) {
+    return response.status(200).json({
+      numberOfOrders: 0,
+      totalAmountOrders: 0,
+      mostSold: {
+        product: 'No hay ventas',
+        units: 0,
+      },
+      amountBeneficiariesUF: 0,
+    });
+  }
 
   const productName = await Product.findOne(most.productId)
 
