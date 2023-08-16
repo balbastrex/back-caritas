@@ -19,7 +19,6 @@ import { BeneficiaryNeedsPrintResource } from './BeneficiaryNeedsPrintResource';
 import { BeneficiaryResource } from './BeneficiaryResource';
 import { BeneficiarySelectorResource } from './BeneficiarySelectorResource';
 import { BeneficiaryTurnResource } from './BeneficiaryTurnResource';
-import {Order} from "../../../entities/Order";
 
 export const BeneficiaryIndex = async (request: Request, response: Response) => {
   const beneficiaries = await Beneficiary.find({
@@ -278,7 +277,7 @@ const isLicenseDuplicated = (license) => {
 }
 
 export const BeneficiariesNeedsPrint = async (request: Request, response: Response) => {
-  const totalBeneficiaries = await Beneficiary.count();
+  const totalBeneficiaries = await Beneficiary.count({ relations: ['parish'], where: { parish: { marketId: response.locals.marketId } } });
   const beneficiaries = await Beneficiary.find({ ...response.locals.findQuery });
   const beneficiariesNeedsPrintResources = beneficiaries.map(beneficiary => new BeneficiaryNeedsPrintResource(beneficiary));
 
