@@ -125,16 +125,30 @@ const getNumberOfFirstBeneficiaries = async ({startDate, endDate, marketId}) => 
 
 export const BeneficiariesByAge = async (request: Request, response: Response) => {
   const marketId = response.locals.marketId;
+  const today = moment().format('yyyy-MM-DD')
 
   const beneficiaries = await Beneficiary.createQueryBuilder('beneficiaries')
     .leftJoin('beneficiaries.parish', 'parish')
     .where('parish.marketId = :marketId', { marketId: marketId })
-    .andWhere('beneficiaries.needs_print = false')
+    .andWhere('beneficiaries.expires >= :today', { today: today })
     .select('SUM (beneficiaries.minors)', 'minors')
     .addSelect('SUM (beneficiaries.adults)', 'adults')
+    .addSelect('COUNT (beneficiaries.id)', 'noExpired')
     .getRawOne();
 
-  return response.status(200).json(beneficiaries);
+  const activeBeneficiaries = await Beneficiary.createQueryBuilder('beneficiaries')
+  .leftJoin('beneficiaries.parish', 'parish')
+  .where('parish.marketId = :marketId', { marketId: marketId })
+  .andWhere('beneficiaries.expires < :today', { today: today })
+  .select('COUNT (beneficiaries.id)', 'expired')
+  .getRawOne();
+
+  const activePercentage = (beneficiaries.noExpired * 100) / activeBeneficiaries.expired;
+
+  return response.status(200).json({
+    ...beneficiaries,
+    activePercentage: activePercentage.toFixed(0)
+  });
 }
 
 export const WeekReport = async (request: Request, response: Response) => {
