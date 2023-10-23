@@ -1,12 +1,9 @@
-import { Request, Response } from 'express';
+import {Request, Response} from 'express';
 import {Order} from "../../../entities/Order";
 import {Beneficiary} from "../../../entities/Beneficiary";
 import moment from 'moment';
 import {OrderLine} from "../../../entities/OrderLine";
 import {Product} from "../../../entities/Product";
-import {Brackets} from "typeorm";
-import {ParishOrdersReportResource} from "../Order/ParishOrdersReportResource";
-import {getBeneficiaryAmount, getParishAmount} from "../Receipt/ReceiptController";
 
 export const memoryPeriod = async (request: Request, response: Response) => {
   const startDate = request.body.startDate;

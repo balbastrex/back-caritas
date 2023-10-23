@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
-import { Turn } from '../../../entities/Turn';
-import { TurnMarketResource } from './TurnMarketResource';
-import { TurnResource } from './TurnResource';
+import {Request, Response} from 'express';
+import {Turn} from '../../../entities/Turn';
+import {TurnMarketResource} from './TurnMarketResource';
+import {TurnResource} from './TurnResource';
 
 export const TurnIndex = async (request: Request, response: Response) => {
   const turns = await Turn.find({ where: { marketId: response.locals.marketId } });
