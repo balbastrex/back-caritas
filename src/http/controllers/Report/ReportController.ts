@@ -10,9 +10,9 @@ export const memoryPeriod = async (request: Request, response: Response) => {
   const endDate = request.body.endDate;
   const marketId = response.locals.marketId;
 
-  const amountOrders = await getAmountOrders({startDate, endDate, marketId});
-  const numberOfLicense = await getNumberOfLicense({startDate, endDate, marketId })
-  const totalBeneficiaries = await getNumberOfBeneficiaries({startDate, endDate, marketId })
+  const amountOrders = await getAmountOrders({startDate, endDate, marketId, filterParish: null});
+  const numberOfLicense = await getNumberOfLicense({startDate, endDate, marketId, filterParish: null })
+  const totalBeneficiaries = await getNumberOfBeneficiaries({startDate, endDate, marketId, filterParish: null })
   const firstTimeLicense = await getNumberOfFirstBeneficiaries({startDate, endDate, marketId});
   const numberOfNationals = await getSpanishFamilies({startDate, endDate, marketId });
   const numberOfActiveLicense = 'x';
@@ -32,19 +32,24 @@ export const memoryPeriod = async (request: Request, response: Response) => {
   });
 }
 
-const getNumberOfLicense = async ({startDate, endDate, marketId}) => {
-  const numberOfLicense = await Order.createQueryBuilder('orders')
+const getNumberOfLicense = async ({startDate, endDate, marketId, filterParish}) => {
+  const query = Order.createQueryBuilder('orders')
     .select('COUNT(DISTINCT orders.beneficiaryId)', 'numberOfLicense')
     .where('orders.id_economato = :economato', { economato: marketId })
     .andWhere('orders.created >= :start', { start: startDate })
     .andWhere('orders.created <= :end', { end: endDate })
-    .getRawOne();
+
+  if (filterParish) {
+    query.andWhere('orders.parishId = :parishId', { parishId: filterParish })
+  }
+
+  const numberOfLicense = await query.getRawOne();
 
   return parseInt(numberOfLicense.numberOfLicense);
 }
 
-const getNumberOfBeneficiaries = async ({startDate, endDate, marketId}) => {
-  const numberOfFamilyUnit = await Order.createQueryBuilder('orders')
+const getNumberOfBeneficiaries = async ({startDate, endDate, marketId, filterParish}) => {
+  const query = Order.createQueryBuilder('orders')
     .distinctOn(['orders.beneficiaryId'])
     .where('orders.id_economato = :economato', { economato: marketId })
     .andWhere('orders.created >= :start', { start: startDate })
@@ -52,7 +57,12 @@ const getNumberOfBeneficiaries = async ({startDate, endDate, marketId}) => {
     .innerJoin('orders.beneficiary', 'beneficiary')
     .select('SUM (beneficiary.family_unit)', 'familyUnit')
     .addSelect('SUM (beneficiary.minors)', 'minors')
-    .getRawOne();
+
+  if (filterParish) {
+    query.andWhere('orders.parishId = :parishId', { parishId: filterParish })
+  }
+
+  const numberOfFamilyUnit = await query.getRawOne();
 
   return {
     numberOfFamilyUnit: parseInt(numberOfFamilyUnit.familyUnit),
@@ -73,12 +83,17 @@ const getSpanishFamilies = async ({startDate, endDate, marketId}) => {
   return numberOfSpanishFamilies.length
 }
 
-const getAmountOrders = async ({startDate, endDate, marketId}) => {
-  const orders = await Order.createQueryBuilder('orders')
+const getAmountOrders = async ({startDate, endDate, marketId, filterParish}) => {
+  const query = Order.createQueryBuilder('orders')
     .where('orders.id_economato = :economato', { economato: marketId })
     .andWhere('orders.created >= :start', { start: startDate })
     .andWhere('orders.created <= :end', { end: endDate })
-    .getMany();
+
+  if (filterParish) {
+    query.andWhere('orders.parishId = :parishId', { parishId: filterParish })
+  }
+
+  const orders = await query.getMany();
 
   let totalParish = 0;
   let totalBeneficiary = 0;
@@ -121,38 +136,54 @@ const getNumberOfFirstBeneficiaries = async ({startDate, endDate, marketId}) => 
 
 export const BeneficiariesByAge = async (request: Request, response: Response) => {
   const marketId = response.locals.marketId;
+  const parishId = response.locals.parishId;
+  const profileId = response.locals.profileId;
   const today = moment().format('yyyy-MM-DD')
 
-  const beneficiaries = await Beneficiary.createQueryBuilder('beneficiaries')
+  const query = Beneficiary.createQueryBuilder('beneficiaries')
     .leftJoin('beneficiaries.parish', 'parish')
     .where('parish.marketId = :marketId', { marketId: marketId })
     .andWhere('beneficiaries.expires >= :today', { today: today })
     .select('SUM (beneficiaries.minors)', 'minors')
     .addSelect('SUM (beneficiaries.adults)', 'adults')
-    .addSelect('COUNT (beneficiaries.id)', 'noExpired')
-    .getRawOne();
+    .addSelect('COUNT (beneficiaries.id)', 'noexpired')
 
-  const activeBeneficiaries = await Beneficiary.createQueryBuilder('beneficiaries')
+    if (profileId === 5) {
+      query.andWhere('beneficiaries.parishId = :parishId', { parishId: parishId })
+    }
+
+  const beneficiaries = await query.getRawOne();
+
+  const activeQuery = Beneficiary.createQueryBuilder('beneficiaries')
   .leftJoin('beneficiaries.parish', 'parish')
   .where('parish.marketId = :marketId', { marketId: marketId })
   .andWhere('beneficiaries.expires < :today', { today: today })
   .select('COUNT (beneficiaries.id)', 'expired')
-  .getRawOne();
 
-  const activePercentage = (beneficiaries.noExpired * 100) / activeBeneficiaries.expired;
+  if (profileId === 5) {
+    activeQuery.andWhere('beneficiaries.parishId = :parishId', { parishId: parishId })
+  }
+
+  const activeBeneficiaries = await activeQuery.getRawOne();
+
+  const activePercentage = (beneficiaries.noexpired * 100) / activeBeneficiaries.expired;
 
   return response.status(200).json({
     ...beneficiaries,
+    ...activeBeneficiaries,
     activePercentage: activePercentage.toFixed(0)
   });
 }
 
 export const WeekReport = async (request: Request, response: Response) => {
   const marketId = response.locals.marketId;
+  const parishId = response.locals.parishId;
+  const profileId = response.locals.profileId;
+  let filterParish = null;
   const startDate = moment().startOf('isoWeek').format('YYYY-MM-DD');
   const endDate = moment().endOf('isoWeek').format('YYYY-MM-DD');
 
-  const most = await OrderLine.createQueryBuilder('orderLine')
+  const query = OrderLine.createQueryBuilder('orderLine')
     .leftJoin('orderLine.order', 'order')
     .where('order.id_economato = :economato', { economato: marketId })
     .andWhere('order.created >= :start', { start: startDate })
@@ -161,7 +192,13 @@ export const WeekReport = async (request: Request, response: Response) => {
     .addSelect('SUM (orderLine.units)', 'units')
     .groupBy('orderLine.productId')
     .orderBy('units', 'DESC')
-    .getRawOne();
+
+  if (profileId === 5) {
+    query.andWhere('order.parishId = :parishId', { parishId: parishId })
+    filterParish = parishId;
+  }
+
+  const most = await query.getRawOne();
 
   if (!most) {
     return response.status(200).json({
@@ -182,9 +219,9 @@ export const WeekReport = async (request: Request, response: Response) => {
     units: most.units,
   }
 
-  const amountBeneficiariesUF = await getNumberOfBeneficiaries({startDate, endDate, marketId});
-  const amountOrders = await getAmountOrders({startDate, endDate, marketId});
-  const totalBeneficiaries = await getNumberOfLicense({startDate, endDate, marketId});
+  const amountBeneficiariesUF = await getNumberOfBeneficiaries({startDate, endDate, marketId, filterParish});
+  const amountOrders = await getAmountOrders({startDate, endDate, marketId, filterParish});
+  const totalBeneficiaries = await getNumberOfLicense({startDate, endDate, marketId, filterParish});
 
   return response.status(200).json({
     numberOfOrders: totalBeneficiaries,
@@ -196,6 +233,8 @@ export const WeekReport = async (request: Request, response: Response) => {
 
 export const ParishWeekReport = async (request: Request, response: Response) => {
   const marketId = response.locals.marketId;
+  const parishId = response.locals.parishId;
+  const profileId = response.locals.profileId;
   const startDate = moment().startOf('isoWeek').format('YYYY-MM-DD');
   const endDate = moment().endOf('isoWeek').format('YYYY-MM-DD');
 
@@ -207,6 +246,10 @@ export const ParishWeekReport = async (request: Request, response: Response) => 
 
     query.andWhere('orders.created >= :start', { start: startDate })
     query.andWhere('orders.created <= :end', { end: endDate });
+
+  if (profileId === 5) {
+    query.andWhere('orders.parishId = :parishId', { parishId: parishId })
+  }
 
   const orders: Array<any> = await query.orderBy({
     'orders.id': 'ASC'
