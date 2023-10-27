@@ -62,16 +62,15 @@ const getNumberOfBeneficiaries = async ({startDate, endDate, marketId}) => {
 
 const getSpanishFamilies = async ({startDate, endDate, marketId}) => {
   const numberOfSpanishFamilies = await Order.createQueryBuilder('orders')
-    .distinctOn(['orders.beneficiaryId'])
+    .select('DISTINCT orders.beneficiaryId')
     .where('orders.id_economato = :economato', { economato: marketId })
     .andWhere('orders.created >= :start', { start: startDate })
     .andWhere('orders.created <= :end', { end: endDate })
     .leftJoin('orders.beneficiary', 'beneficiary')
     .andWhere('beneficiary.id_citizen_type = :citizenType', { citizenType: 1 })
-    .select('COUNT (beneficiary.id)', 'citizenType')
-    .getRawOne();
+    .getRawMany();
 
-  return parseInt(numberOfSpanishFamilies.citizenType)
+  return numberOfSpanishFamilies.length
 }
 
 const getAmountOrders = async ({startDate, endDate, marketId}) => {
