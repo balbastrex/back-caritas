@@ -158,6 +158,19 @@ export const OrderUpdate = async (request: Request, response: Response) => {
   await order.save();
 
   const oldOrderLines = await OrderLine.find({ orderId: order.id });
+
+  //  Recuperamos el stock que restamos anteriormente para no tener mermas de producto.
+  for (const line of oldOrderLines) {
+    const product = await Product.findOne(line.productId);
+
+    if (!product) {
+      continue;
+    }
+
+    product.stock = product.stock + line.units;
+    await product.save();
+  }
+
   await OrderLine.remove(oldOrderLines);
 
   request.body.orderLines.forEach((line: any) => {

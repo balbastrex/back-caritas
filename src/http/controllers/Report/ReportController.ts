@@ -1,12 +1,9 @@
-import { Request, Response } from 'express';
+import {Request, Response} from 'express';
 import {Order} from "../../../entities/Order";
 import {Beneficiary} from "../../../entities/Beneficiary";
 import moment from 'moment';
 import {OrderLine} from "../../../entities/OrderLine";
 import {Product} from "../../../entities/Product";
-import {Brackets} from "typeorm";
-import {ParishOrdersReportResource} from "../Order/ParishOrdersReportResource";
-import {getBeneficiaryAmount, getParishAmount} from "../Receipt/ReceiptController";
 
 export const memoryPeriod = async (request: Request, response: Response) => {
   const startDate = request.body.startDate;
@@ -65,16 +62,15 @@ const getNumberOfBeneficiaries = async ({startDate, endDate, marketId}) => {
 
 const getSpanishFamilies = async ({startDate, endDate, marketId}) => {
   const numberOfSpanishFamilies = await Order.createQueryBuilder('orders')
-    .distinctOn(['orders.beneficiaryId'])
+    .select('DISTINCT orders.beneficiaryId')
     .where('orders.id_economato = :economato', { economato: marketId })
     .andWhere('orders.created >= :start', { start: startDate })
     .andWhere('orders.created <= :end', { end: endDate })
     .leftJoin('orders.beneficiary', 'beneficiary')
     .andWhere('beneficiary.id_citizen_type = :citizenType', { citizenType: 1 })
-    .select('COUNT (beneficiary.id)', 'citizenType')
-    .getRawOne();
+    .getRawMany();
 
-  return parseInt(numberOfSpanishFamilies.citizenType)
+  return numberOfSpanishFamilies.length
 }
 
 const getAmountOrders = async ({startDate, endDate, marketId}) => {
@@ -125,16 +121,30 @@ const getNumberOfFirstBeneficiaries = async ({startDate, endDate, marketId}) => 
 
 export const BeneficiariesByAge = async (request: Request, response: Response) => {
   const marketId = response.locals.marketId;
+  const today = moment().format('yyyy-MM-DD')
 
   const beneficiaries = await Beneficiary.createQueryBuilder('beneficiaries')
     .leftJoin('beneficiaries.parish', 'parish')
     .where('parish.marketId = :marketId', { marketId: marketId })
-    .andWhere('beneficiaries.needs_print = false')
+    .andWhere('beneficiaries.expires >= :today', { today: today })
     .select('SUM (beneficiaries.minors)', 'minors')
     .addSelect('SUM (beneficiaries.adults)', 'adults')
+    .addSelect('COUNT (beneficiaries.id)', 'noExpired')
     .getRawOne();
 
-  return response.status(200).json(beneficiaries);
+  const activeBeneficiaries = await Beneficiary.createQueryBuilder('beneficiaries')
+  .leftJoin('beneficiaries.parish', 'parish')
+  .where('parish.marketId = :marketId', { marketId: marketId })
+  .andWhere('beneficiaries.expires < :today', { today: today })
+  .select('COUNT (beneficiaries.id)', 'expired')
+  .getRawOne();
+
+  const activePercentage = (beneficiaries.noExpired * 100) / activeBeneficiaries.expired;
+
+  return response.status(200).json({
+    ...beneficiaries,
+    activePercentage: activePercentage.toFixed(0)
+  });
 }
 
 export const WeekReport = async (request: Request, response: Response) => {
