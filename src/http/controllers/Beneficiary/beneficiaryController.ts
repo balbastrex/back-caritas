@@ -19,6 +19,7 @@ import { BeneficiaryNeedsPrintResource } from './BeneficiaryNeedsPrintResource';
 import { BeneficiaryResource } from './BeneficiaryResource';
 import { BeneficiarySelectorResource } from './BeneficiarySelectorResource';
 import { BeneficiaryTurnResource } from './BeneficiaryTurnResource';
+import {Market} from "../../../entities/Market";
 
 export const BeneficiaryIndex = async (request: Request, response: Response) => {
   const beneficiaries = await Beneficiary.find({
@@ -111,17 +112,25 @@ export const BeneficiaryShow = async (request: Request, response: Response) => {
 export const BeneficiaryStore = async (request: Request, response: Response) => {
   const beneficiary: Beneficiary = await new Beneficiary();
 
-  if (await isIdentifyDuplicated(request.body.cif)) {
-    return response.status(404).json({ message: 'Este NIF/NIE ya existe.' });
+  const existentBeneficiary = await isIdentifyDuplicated(request.body.cif)
+
+  if (existentBeneficiary) {
+    const church = await Parish.findOne({
+      where: {
+        id: existentBeneficiary.parishId
+      },
+      relations: ['market']
+    })
+    return response.status(404).json({ message: `
+    Este NIF/NIE ya existe. 
+    Economato: ${church.market.name} 
+    Parroquia: ${church.name} 
+    ` });
   }
 
   if (request.body.license !== 0 && await isLicenseDuplicated(request.body.license)) {
     return response.status(404).json({ message: 'Este número de licencia ya existe.' });
   }
-
-  /*if (!response.locals.parishId) {
-    return response.status(404).json({ message: 'Parish not found.' });
-  }*/
 
   beneficiary.firstname = request.body.name;
   beneficiary.lastname1 = request.body.lastname1;
