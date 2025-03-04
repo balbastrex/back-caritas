@@ -26,6 +26,7 @@ export class BeneficiaryExcelReportResource {
   Gratuidad: string;
   Sice: number;
   TipoFamilia: string;
+  FechaDeAlta: string;
 
   citizenType: string;
   civilStateType: string;
@@ -61,6 +62,7 @@ export class BeneficiaryExcelReportResource {
     this.Expira = moment(beneficiary.expires).format('DD/MM/YYYY');
     this.Gratuidad = `${beneficiary.gratuitous || 0}%`;
     this.Sice = beneficiary.sice;
+    this.FechaDeAlta = moment(new Date(beneficiary.created)).format('DD/MM/YYYY');
 
     this.budget = (beneficiary.parish?.market?.budget_base + ((beneficiary.adults - 1) * beneficiary.parish?.market?.budget_adult) + (beneficiary.minors * beneficiary.parish?.market?.budget_child)).toString() + ' €';
 
